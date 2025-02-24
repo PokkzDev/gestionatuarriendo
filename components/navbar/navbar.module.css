@@ -1,0 +1,232 @@
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4rem;
+  background-color: var(--white);
+  box-shadow: var(--shadow-sm);
+  z-index: 50;
+}
+
+.navContainer {
+  max-width: 1280px;
+  height: 100%;
+  margin: 0 auto;
+  padding: 0 var(--spacing-md);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logoContainer {
+  display: flex;
+  align-items: center;
+}
+
+.logoText {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--gray-900);
+}
+
+.navLinks {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xl);
+}
+
+.mainLinks {
+  display: none;
+  align-items: center;
+  gap: var(--spacing-lg);
+}
+
+.mainLinks a {
+  font-size: var(--font-size-sm);
+  color: var(--gray-600);
+  font-weight: 500;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-md);
+  transition: var(--transition-normal);
+}
+
+.mainLinks a:hover {
+  color: var(--primary);
+  background-color: var(--gray-50);
+}
+
+.userLinks {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.authButton {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  padding: var(--spacing-xs) var(--spacing-md);
+  border-radius: var(--radius-md);
+  transition: all 0.2s ease;
+  color: var(--gray-700);
+  text-decoration: none;
+  border: 1px solid var(--gray-300);
+}
+
+.authButton:hover {
+  background-color: var(--gray-100);
+  color: var(--gray-900);
+  border-color: var(--gray-400);
+}
+
+.loginButton {
+  background-color: #2563eb;
+  color: white;
+  border: none;
+}
+
+.loginButton:hover {
+  background-color: #1d4ed8;
+  color: white;
+}
+
+.iconButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: var(--radius-full);
+  transition: var(--transition-normal);
+  color: var(--gray-600);
+}
+
+.iconButton:hover {
+  background-color: var(--gray-100);
+  color: var(--primary);
+}
+
+.icon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.profileButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatar {
+  border-radius: var(--radius-full);
+  transition: var(--transition-normal);
+}
+
+.avatar:hover {
+  opacity: 0.8;
+}
+
+.menuButton {
+  display: block;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: var(--spacing-xs);
+}
+
+.menuIcon {
+  width: 24px;
+  height: 20px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.menuIcon span {
+  display: block;
+  width: 100%;
+  height: 2px;
+  background-color: var(--gray-600);
+  transition: var(--transition-normal);
+}
+
+.menuIcon.open span:first-child {
+  transform: translateY(9px) rotate(45deg);
+}
+
+.menuIcon.open span:nth-child(2) {
+  opacity: 0;
+}
+
+.menuIcon.open span:last-child {
+  transform: translateY(-9px) rotate(-45deg);
+}
+
+/* Mobile menu */
+@media (max-width: 768px) {
+  .navLinks {
+    position: fixed;
+    top: 4rem;
+    left: 0;
+    right: 0;
+    background-color: var(--white);
+    padding: var(--spacing-md);
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--spacing-md);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-100%);
+    opacity: 0;
+    visibility: hidden;
+    transition: var(--transition-normal);
+  }
+
+  .navLinks.show {
+    transform: translateY(0);
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .mainLinks {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .mainLinks a {
+    padding: var(--spacing-sm);
+    text-align: center;
+  }
+
+  .userLinks {
+    justify-content: center;
+    padding-top: var(--spacing-md);
+    border-top: 1px solid var(--gray-200);
+  }
+}
+
+/* Desktop styles */
+@media (min-width: 769px) {
+  .menuButton {
+    display: none;
+  }
+
+  .logoText {
+    display: block;
+  }
+
+  .mainLinks {
+    display: flex;
+  }
+
+  .navLinks {
+    position: static;
+    padding: 0;
+    transform: none;
+    opacity: 1;
+    visibility: visible;
+    background: none;
+    box-shadow: none;
+  }
+}
