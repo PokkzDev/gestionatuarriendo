@@ -68,25 +68,14 @@
   padding: var(--spacing-xs) var(--spacing-md);
   border-radius: var(--radius-md);
   transition: all 0.2s ease;
-  color: var(--gray-700);
-  text-decoration: none;
-  border: 1px solid var(--gray-300);
-}
-
-.authButton:hover {
-  background-color: var(--gray-100);
-  color: var(--gray-900);
-  border-color: var(--gray-400);
-}
-
-.loginButton {
-  background-color: #2563eb;
   color: white;
+  background-color: var(--gray-800);
+  text-decoration: none;
   border: none;
 }
 
-.loginButton:hover {
-  background-color: #1d4ed8;
+.authButton:hover {
+  background-color: var(--gray-700);
   color: white;
 }
 
@@ -228,5 +217,107 @@
     visibility: visible;
     background: none;
     box-shadow: none;
+  }
+}
+
+.userMenuContainer {
+  position: relative;
+}
+
+.userMenuButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.userAvatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid var(--gray-200);
+  transition: border-color 0.2s ease;
+}
+
+.userAvatar:hover {
+  border-color: var(--primary);
+}
+
+.userMenuDropdown {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  right: 0;
+  width: 240px;
+  background-color: white;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  padding: var(--spacing-md);
+  z-index: 100;
+}
+
+.userInfo {
+  padding-bottom: var(--spacing-md);
+  border-bottom: 1px solid var(--gray-200);
+  margin-bottom: var(--spacing-md);
+}
+
+.userName {
+  font-weight: 600;
+  color: var(--gray-900);
+  margin-bottom: var(--spacing-xs);
+}
+
+.userEmail {
+  font-size: var(--font-size-sm);
+  color: var(--gray-600);
+}
+
+.userMenuLinks {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.userMenuLinks a,
+.logoutButton {
+  padding: var(--spacing-sm);
+  border-radius: var(--radius-md);
+  color: var(--gray-700);
+  font-size: var(--font-size-sm);
+  text-decoration: none;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+.userMenuLinks a:hover {
+  background-color: var(--gray-50);
+  color: var(--gray-900);
+}
+
+.logoutButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  color: var(--red-600);
+}
+
+.logoutButton:hover {
+  background-color: var(--red-50);
+  color: var(--red-700);
+}
+
+/* Update mobile styles */
+@media (max-width: 768px) {
+  .userMenuDropdown {
+    position: static;
+    width: 100%;
+    margin-top: var(--spacing-md);
+    box-shadow: none;
+    border: 1px solid var(--gray-200);
   }
 }

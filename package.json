@@ -6,11 +6,18 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "seed": "node prisma/seed.js"
+  },
+  "prisma": {
+    "seed": "node prisma/seed.js"
   },
   "dependencies": {
+    "@faker-js/faker": "^9.5.0",
     "@prisma/client": "^6.4.1",
+    "bcrypt": "^5.1.1",
     "next": "15.1.7",
+    "next-auth": "^4.24.11",
     "prisma": "^6.4.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
