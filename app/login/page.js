@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, Suspense } from 'react';
+import { useState, Suspense, useEffect } from 'react';
 import { signIn } from 'next-auth/react';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -13,8 +13,12 @@ function LoginForm() {
   
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [isLogin, setIsLogin] = useState(mode === 'login' ? true : true);
+  const [isLogin, setIsLogin] = useState(mode !== 'registro');
   const [role, setRole] = useState('ARRENDATARIO');
+
+  useEffect(() => {
+    setIsLogin(mode !== 'registro');
+  }, [mode]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
