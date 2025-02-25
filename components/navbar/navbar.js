@@ -76,9 +76,13 @@ export default function Navbar() {
 
         <div className={`${styles.navLinks} ${isMenuOpen ? styles.show : ''}`}>
           <div className={styles.mainLinks}>
-            <MenuLink href="/properties">Propiedades</MenuLink>
+            
+            {status === 'authenticated' && (
+              <MenuLink href="/mis-gastos">Mis Gastos</MenuLink>
+            )}
+            {/* <MenuLink href="/properties">Propiedades</MenuLink>
             <MenuLink href="/tenants">Arrendatarios</MenuLink>
-            <MenuLink href="/payments">Pagos</MenuLink>
+            <MenuLink href="/payments">Pagos</MenuLink> */}
           </div>
           
           <div className={styles.userLinks}>
@@ -113,7 +117,7 @@ export default function Navbar() {
                     </div>
                     <div className={styles.userMenuLinks}>
                       <MenuLink href="/profile">Mi Perfil</MenuLink>
-                      <MenuLink href="/settings">Configuración</MenuLink>
+                      <MenuLink href="/mi-cuenta/preferencias">Mi Cuenta</MenuLink>
                       <button 
                         className={styles.logoutButton}
                         onClick={handleLogout}

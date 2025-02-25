@@ -1,0 +1,439 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 60px);
+  width: 100%;
+  padding-top: 10px;
+  position: relative;
+  background-color: #f5f5f5;
+}
+
+@media (min-width: 769px) {
+  .container {
+    flex-direction: row;
+    padding: 20px;
+  }
+}
+
+.sidebar {
+  background-color: #f5f5f5;
+  transition: transform 0.3s ease;
+}
+
+@media (min-width: 769px) {
+  .sidebar {
+    width: 250px;
+    padding: 20px;
+    margin-right: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    position: relative;
+    height: auto;
+    top: 0;
+  }
+}
+
+.sidebarShow {
+  transform: translateX(0);
+}
+
+.mainContent {
+  flex: 1;
+  padding: 20px;
+  overflow-x: hidden;
+  margin-left: 0;
+}
+
+.container::before {
+  content: '';
+  position: fixed;
+  top: 64px;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 5;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.sidebarOpen::before {
+  opacity: 1;
+  visibility: visible;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.settingSection {
+  margin-bottom: 2rem;
+}
+
+.sectionTitle {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.settingIcon {
+  margin-right: 10px;
+  font-size: 1.2rem;
+  color: inherit;
+}
+
+.settingsCategory {
+  margin-bottom: 2rem;
+}
+
+.settingsCategoryList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.settingsCategoryButton {
+  display: flex;
+  align-items: center;
+  padding: 12px 15px;
+  border-radius: 8px;
+  background-color: white;
+  border: 1px solid #e0e0e0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+  gap: 10px;
+  font-size: 0.9rem;
+}
+
+.settingsCategoryButton:hover {
+  background-color: #f0f0f0;
+  transform: translateY(-2px);
+}
+
+.settingsCategoryButton.active {
+  background-color: #e6f7ff;
+  border-color: #1890ff;
+  color: #1890ff;
+}
+
+.settingsLabel {
+  font-weight: 500;
+}
+
+.contentArea {
+  background-color: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  min-height: 500px;
+}
+
+.formGroup {
+  margin-bottom: 1.5rem;
+}
+
+.formLabel {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #333;
+}
+
+.formInput, .formSelect {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  transition: border-color 0.2s ease;
+}
+
+.formInput:focus, .formSelect:focus {
+  border-color: #4a6cf7;
+  outline: none;
+}
+
+.formHelp {
+  font-size: 0.8rem;
+  color: #777;
+  margin-top: 5px;
+}
+
+.nameChangesInfo {
+  margin-top: 5px;
+}
+
+.warningText {
+  font-size: 0.8rem;
+  color: #ff9800;
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background-color: #fff8e1;
+  padding: 8px 10px;
+  border-radius: 4px;
+  border-left: 3px solid #ff9800;
+}
+
+.warningIcon {
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+.saveButton {
+  background-color: #4a6cf7;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.saveButton:hover {
+  background-color: #3a58d6;
+}
+
+.cancelButton {
+  background-color: transparent;
+  color: #555;
+  padding: 10px 20px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  margin-left: 10px;
+  transition: background-color 0.2s ease;
+}
+
+.cancelButton:hover {
+  background-color: #f5f5f5;
+}
+
+.actionButton {
+  background-color: transparent;
+  border: none;
+  padding: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 4px;
+  color: #555;
+}
+
+.actionButton:hover {
+  background-color: #f5f5f5;
+}
+
+.dangerZone {
+  margin-top: 2rem;
+  padding: 1rem;
+  border: 1px solid #ff4d4f;
+  border-radius: 6px;
+  background-color: rgba(255, 77, 79, 0.05);
+}
+
+.dangerTitle {
+  color: #ff4d4f;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 1rem;
+}
+
+.dangerButton {
+  background-color: #ff4d4f;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.dangerButton:hover {
+  background-color: #ff2b2d;
+}
+
+.mobileMenuToggle {
+  display: none;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 48px;
+  height: 24px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: .4s;
+  border-radius: 24px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #4a6cf7;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #4a6cf7;
+}
+
+input:checked + .slider:before {
+  transform: translateX(24px);
+}
+
+.loadingSpinner {
+  width: 30px;
+  height: 30px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #4a6cf7;
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+}
+
+.successMessage {
+  background-color: #f0fdf6;
+  border: 1px solid #10b981;
+  color: #10b981;
+  padding: 10px 15px;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.errorMessage {
+  background-color: #fff1f0;
+  border: 1px solid #ff4d4f;
+  color: #ff4d4f;
+  padding: 10px 15px;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Mobile styles */
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    top: 60px;
+    left: 0;
+    bottom: 0;
+    width: 85%;
+    max-width: 300px;
+    z-index: 100;
+    transform: translateX(-100%);
+    box-shadow: 5px 0 15px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    background-color: white;
+    overflow-y: auto;
+    transition: transform 0.3s ease;
+  }
+
+  .sidebarShow {
+    transform: translateX(0);
+  }
+
+  .container::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 90;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+  }
+
+  .sidebarOpen::before {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .mobileMenuToggle {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    margin-bottom: 15px;
+    background-color: white;
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    font-size: 1rem;
+    color: #333;
+    cursor: pointer;
+    gap: 10px;
+  }
+
+  .toggleLabel {
+    font-weight: 500;
+    margin-left: 5px;
+  }
+
+  .mobileMenuToggle:hover {
+    background-color: #f5f5f5;
+  }
+}
+
+@media (max-width: 576px) {
+  .mainContent {
+    padding: 15px;
+  }
+  
+  .contentArea {
+    padding: 15px;
+  }
+} 
