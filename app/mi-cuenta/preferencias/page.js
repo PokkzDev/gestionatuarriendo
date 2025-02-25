@@ -1006,7 +1006,7 @@ export default function MiCuentaPreferencias() {
         id="settings-sidebar"
         className={`${styles.sidebar} ${showSidebar ? styles.sidebarShow : ''}`}
       >
-        <h1 className={styles.title}>Mi Cuenta</h1>
+        <h1 className={styles.title}>Preferencias</h1>
         <div className={styles.settingsCategoryList}>
           {settingCategories.map((category) => (
             <button

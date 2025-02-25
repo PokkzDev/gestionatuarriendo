@@ -6,6 +6,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import styles from './page.module.css';
 import { useSearchParams } from 'next/navigation';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 function LoginForm() {
   const searchParams = useSearchParams();
@@ -15,10 +16,75 @@ function LoginForm() {
   const [loading, setLoading] = useState(false);
   const [isLogin, setIsLogin] = useState(mode !== 'registro');
   const [role, setRole] = useState('ARRENDATARIO');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [passwordStrength, setPasswordStrength] = useState({
+    score: 0,
+    message: 'Ingrese una contraseña'
+  });
 
   useEffect(() => {
     setIsLogin(mode !== 'registro');
   }, [mode]);
+
+  // Function to check password strength
+  const checkPasswordStrength = (password) => {
+    // Basic password strength check
+    let score = 0;
+    let message = '';
+
+    if (!password) {
+      setPasswordStrength({ score: 0, message: 'Ingrese una contraseña' });
+      return;
+    }
+
+    // Length check
+    if (password.length < 8) {
+      message = 'Contraseña demasiado corta';
+    } else {
+      score += 1;
+      
+      // Check for numbers
+      if (/\d/.test(password)) score += 1;
+      
+      // Check for lowercase letters
+      if (/[a-z]/.test(password)) score += 1;
+      
+      // Check for uppercase letters
+      if (/[A-Z]/.test(password)) score += 1;
+      
+      // Check for special characters
+      if (/[^A-Za-z0-9]/.test(password)) score += 1;
+      
+      // Set message based on score
+      if (score <= 2) {
+        message = 'Débil';
+      } else if (score === 3) {
+        message = 'Moderada';
+      } else if (score === 4) {
+        message = 'Fuerte';
+      } else {
+        message = 'Muy fuerte';
+      }
+    }
+
+    setPasswordStrength({ score, message });
+  };
+
+  // Update password strength when password changes
+  useEffect(() => {
+    checkPasswordStrength(password);
+  }, [password]);
+
+  // Get color for password strength indicator
+  const getPasswordStrengthColor = () => {
+    const { score } = passwordStrength;
+    if (score <= 1) return '#ff4d4f'; // Red for weak
+    if (score === 2) return '#faad14'; // Yellow/amber for fair
+    if (score === 3) return '#52c41a'; // Green for good
+    if (score >= 4) return '#1890ff'; // Blue for great
+    return '#d9d9d9'; // Default gray
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -27,9 +93,16 @@ function LoginForm() {
 
     const formData = new FormData(e.target);
     const email = formData.get('email');
-    const password = formData.get('password');
+    const passwordFromForm = formData.get('password');
 
     if (!isLogin) {
+      // Validate password strength for registration
+      if (passwordStrength.score < 2) {
+        setError('La contraseña es demasiado débil. Por favor, utilice una combinación de letras, números y símbolos.');
+        setLoading(false);
+        return;
+      }
+
       try {
         const response = await fetch('/api/auth/register', {
           method: 'POST',
@@ -38,21 +111,30 @@ function LoginForm() {
           },
           body: JSON.stringify({
             email,
-            password,
+            password: passwordFromForm,
             role,
           }),
         });
 
         if (!response.ok) {
           const data = await response.json();
-          throw new Error(data.message || 'Error en el registro');
+          // Usar mensaje genérico para errores de registro
+          throw new Error('No se pudo completar el registro. Por favor intente con otros datos o más tarde.');
         }
 
-        await signIn('credentials', {
+        // Si el registro es exitoso, iniciar sesión automáticamente
+        const result = await signIn('credentials', {
           email,
-          password,
-          callbackUrl: '/dashboard',
+          password: passwordFromForm,
+          redirect: false,
         });
+        
+        if (result?.error) {
+          throw new Error('No se pudo completar el proceso. Por favor intente iniciar sesión manualmente.');
+        } else {
+          // Redireccionar al dashboard
+          window.location.href = '/';
+        }
       } catch (error) {
         setError(error.message);
         setLoading(false);
@@ -63,11 +145,20 @@ function LoginForm() {
     try {
       const result = await signIn('credentials', {
         email,
-        password,
-        callbackUrl: '/',
+        password: passwordFromForm,
+        redirect: false
       });
+      
+      if (result?.error) {
+        // Mensaje genérico para todos los tipos de errores de autenticación
+        setError('Credenciales inválidas. Por favor verifique su correo electrónico y contraseña.');
+        setLoading(false);
+      } else {
+        // Redireccionar manualmente
+        window.location.href = '/dashboard';
+      }
     } catch (error) {
-      setError('Error al iniciar sesión');
+      setError('Ha ocurrido un error. Por favor intente más tarde.');
       setLoading(false);
     }
   };
@@ -179,14 +270,44 @@ function LoginForm() {
               <label htmlFor="password" className={styles.label}>
                 Contraseña
               </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                required
-                className={styles.input}
-                placeholder="••••••••"
-              />
+              <div className={styles.passwordInputContainer}>
+                <input
+                  id="password"
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                  required
+                  className={styles.input}
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+                <button 
+                  type="button"
+                  className={styles.passwordToggle}
+                  onClick={() => setShowPassword(!showPassword)}
+                  tabIndex="-1"
+                  aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                >
+                  {showPassword ? <FaEyeSlash /> : <FaEye />}
+                </button>
+              </div>
+              
+              {!isLogin && (
+                <>
+                  <div className={styles.passwordStrengthContainer}>
+                    <div 
+                      className={styles.passwordStrengthBar}
+                      style={{
+                        width: `${(passwordStrength.score / 5) * 100}%`,
+                        backgroundColor: getPasswordStrengthColor()
+                      }}
+                    />
+                  </div>
+                  <p className={styles.formHelp}>
+                    Fortaleza: {passwordStrength.message}. Usa al menos 8 caracteres, incluyendo letras, números y símbolos.
+                  </p>
+                </>
+              )}
             </div>
 
             {isLogin && (
@@ -195,7 +316,15 @@ function LoginForm() {
               </Link>
             )}
 
-            {error && <div className={styles.error}>{error}</div>}
+            {error && (
+              <div className={styles.error}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" style={{ marginRight: '8px' }}>
+                  <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                  <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z"/>
+                </svg>
+                {error}
+              </div>
+            )}
 
             <button
               type="submit"
