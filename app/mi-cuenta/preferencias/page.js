@@ -18,9 +18,12 @@ import {
   FaTrash,
   FaFileAlt,
   FaMobileAlt,
-  FaLanguage
+  FaLanguage,
+  FaEye,
+  FaEyeSlash
 } from 'react-icons/fa';
 import { useSession } from 'next-auth/react';
+import Link from 'next/link';
 
 // Settings Sections Components
 const PersonalInfoSettings = ({ user, onUpdate }) => {
@@ -207,41 +210,122 @@ const SecuritySettings = () => {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(null);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [passwordStrength, setPasswordStrength] = useState({
+    score: 0,
+    message: 'Ingrese una contraseña'
+  });
+
+  // Function to check password strength
+  const checkPasswordStrength = (password) => {
+    // Basic password strength check
+    let score = 0;
+    let message = '';
+
+    if (!password) {
+      setPasswordStrength({ score: 0, message: 'Ingrese una contraseña' });
+      return;
+    }
+
+    // Length check
+    if (password.length < 8) {
+      message = 'Contraseña demasiado corta';
+    } else {
+      score += 1;
+      
+      // Check for numbers
+      if (/\d/.test(password)) score += 1;
+      
+      // Check for lowercase letters
+      if (/[a-z]/.test(password)) score += 1;
+      
+      // Check for uppercase letters
+      if (/[A-Z]/.test(password)) score += 1;
+      
+      // Check for special characters
+      if (/[^A-Za-z0-9]/.test(password)) score += 1;
+      
+      // Set message based on score
+      if (score <= 2) {
+        message = 'Débil';
+      } else if (score === 3) {
+        message = 'Moderada';
+      } else if (score === 4) {
+        message = 'Fuerte';
+      } else {
+        message = 'Muy fuerte';
+      }
+    }
+
+    setPasswordStrength({ score, message });
+  };
+
+  // Check if passwords match
+  const passwordsMatch = () => {
+    if (!confirmPassword) return null;
+    return newPassword === confirmPassword;
+  };
+
+  useEffect(() => {
+    checkPasswordStrength(newPassword);
+  }, [newPassword]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
     
+    // Validate passwords match
     if (newPassword !== confirmPassword) {
       setError('Las contraseñas no coinciden');
       setLoading(false);
       return;
     }
+
+    // Validate minimum password strength
+    if (passwordStrength.score < 2) {
+      setError('La contraseña es demasiado débil. Por favor, utilice una combinación de letras, números y símbolos.');
+      setLoading(false);
+      return;
+    }
     
     try {
-      // API call would go here
-      // const response = await fetch('/api/user/password', {
-      //   method: 'PUT',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ currentPassword, newPassword }),
-      // });
+      // Call the API endpoint to change the password
+      const response = await fetch('/api/user/password', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ currentPassword, newPassword }),
+      });
       
-      // if (!response.ok) throw new Error('Error al cambiar contraseña');
+      const data = await response.json();
       
-      // Simulate API call for now
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      if (!response.ok) {
+        throw new Error(data.error || 'Error al cambiar contraseña');
+      }
       
       setSuccess(true);
       setCurrentPassword('');
       setNewPassword('');
       setConfirmPassword('');
+      setShowNewPassword(false);
+      setShowConfirmPassword(false);
       setTimeout(() => setSuccess(false), 3000);
     } catch (err) {
       setError(err.message || 'Error al cambiar contraseña');
     } finally {
       setLoading(false);
     }
+  };
+
+  // Get color for password strength indicator
+  const getPasswordStrengthColor = () => {
+    const { score } = passwordStrength;
+    if (score <= 1) return '#ff4d4f'; // Red for weak
+    if (score === 2) return '#faad14'; // Yellow/amber for fair
+    if (score === 3) return '#52c41a'; // Green for good
+    if (score >= 4) return '#1890ff'; // Blue for great
+    return '#d9d9d9'; // Default gray
   };
 
   return (
@@ -278,29 +362,72 @@ const SecuritySettings = () => {
         
         <div className={styles.formGroup}>
           <label htmlFor="newPassword" className={styles.formLabel}>Nueva contraseña</label>
-          <input
-            type="password"
-            id="newPassword"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-            className={styles.formInput}
-            disabled={loading}
-            required
-          />
-          <p className={styles.formHelp}>Usa al menos 8 caracteres, incluyendo letras, números y símbolos.</p>
+          <div className={styles.passwordInputContainer}>
+            <input
+              type={showNewPassword ? "text" : "password"}
+              id="newPassword"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              className={styles.formInput}
+              disabled={loading}
+              required
+            />
+            <button 
+              type="button"
+              className={styles.passwordToggle}
+              onClick={() => setShowNewPassword(!showNewPassword)}
+              tabIndex="-1"
+              aria-label={showNewPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+            >
+              {showNewPassword ? <FaEyeSlash /> : <FaEye />}
+            </button>
+          </div>
+          <div className={styles.passwordStrengthContainer}>
+            <div 
+              className={styles.passwordStrengthBar}
+              style={{
+                width: `${(passwordStrength.score / 5) * 100}%`,
+                backgroundColor: getPasswordStrengthColor()
+              }}
+            />
+          </div>
+          <p className={styles.formHelp}>
+            Fortaleza: {passwordStrength.message}. Usa al menos 8 caracteres, incluyendo letras, números y símbolos.
+          </p>
         </div>
         
         <div className={styles.formGroup}>
           <label htmlFor="confirmPassword" className={styles.formLabel}>Confirmar nueva contraseña</label>
-          <input
-            type="password"
-            id="confirmPassword"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            className={styles.formInput}
-            disabled={loading}
-            required
-          />
+          <div className={styles.passwordInputContainer}>
+            <input
+              type={showConfirmPassword ? "text" : "password"}
+              id="confirmPassword"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              className={`${styles.formInput} ${confirmPassword && (passwordsMatch() ? styles.matchSuccess : styles.matchError)}`}
+              disabled={loading}
+              required
+            />
+            <button 
+              type="button"
+              className={styles.passwordToggle}
+              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              tabIndex="-1"
+              aria-label={showConfirmPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+            >
+              {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+            </button>
+          </div>
+          {confirmPassword && !passwordsMatch() && (
+            <p className={styles.passwordMismatch}>
+              <FaExclamationTriangle className={styles.warningIcon} /> Las contraseñas no coinciden
+            </p>
+          )}
+          {confirmPassword && passwordsMatch() && (
+            <p className={styles.passwordMatch}>
+              <FaCheck className={styles.successIcon} /> Las contraseñas coinciden
+            </p>
+          )}
         </div>
         
         <div>
@@ -710,11 +837,30 @@ export default function MiCuentaPreferencias() {
   const [showSidebar, setShowSidebar] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [user, setUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState(null);
 
   useEffect(() => {
-    // Initialize user data from session
-    if (session?.user) {
-      setUser(session.user);
+    // Only fetch user data when authenticated
+    if (session) {
+      const fetchUserData = async () => {
+        setIsLoading(true);
+        try {
+          const response = await fetch('/api/user/profile');
+          if (!response.ok) {
+            throw new Error('Error al obtener datos de usuario');
+          }
+          const data = await response.json();
+          setUser(data);
+        } catch (err) {
+          console.error('Error fetching user data:', err);
+          setLoadError(err.message || 'Error al cargar datos de usuario');
+        } finally {
+          setIsLoading(false);
+        }
+      };
+      
+      fetchUserData();
     }
   }, [session]);
 
@@ -799,6 +945,45 @@ export default function MiCuentaPreferencias() {
   };
 
   const renderSettingContent = () => {
+    // Show loading state while fetching user data
+    if (isLoading) {
+      return (
+        <div className={styles.loadingContainer}>
+          <div className={styles.loadingSpinner}></div>
+          <p>Cargando información...</p>
+        </div>
+      );
+    }
+    
+    // Show error message if user data couldn't be loaded
+    if (loadError) {
+      return (
+        <div className={styles.errorContainer}>
+          <FaExclamationTriangle className={styles.errorIcon} />
+          <p>Error: {loadError}</p>
+          <button 
+            className={styles.retryButton}
+            onClick={() => window.location.reload()}
+          >
+            Reintentar
+          </button>
+        </div>
+      );
+    }
+    
+    // Only render content when user data is available
+    if (!user) {
+      return (
+        <div className={styles.errorContainer}>
+          <FaExclamationTriangle className={styles.errorIcon} />
+          <p>No se ha podido cargar la información del usuario. Por favor, inicia sesión nuevamente.</p>
+          <Link href="/login" className={styles.loginButton}>
+            Iniciar Sesión
+          </Link>
+        </div>
+      );
+    }
+    
     switch (activeSettingCategory) {
       case 'personal':
         return <PersonalInfoSettings user={user} onUpdate={setUser} />;

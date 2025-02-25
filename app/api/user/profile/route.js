@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
 import { getServerSession } from 'next-auth';
+import { authOptions } from '../../auth/[...nextauth]/route';
 
 // Use global to prevent multiple instances of Prisma Client in development
 const globalForPrisma = global;
@@ -10,7 +11,8 @@ if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
 // GET /api/user/profile - Get user profile
 export async function GET(request) {
   try {
-    const session = await getServerSession();
+    // Pass auth options to getServerSession
+    const session = await getServerSession(authOptions);
     
     if (!session) {
       return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
@@ -20,13 +22,7 @@ export async function GET(request) {
     let userId = session.user?.id;
     
     if (!userId) {
-      // Fallback for development
-      const firstUser = await prisma.user.findFirst();
-      if (firstUser) {
-        userId = firstUser.id;
-      } else {
-        return NextResponse.json({ error: 'Usuario no encontrado' }, { status: 404 });
-      }
+      return NextResponse.json({ error: 'ID de usuario no encontrado en la sesión' }, { status: 401 });
     }
     
     // Fetch the user details without using select to ensure all fields are available
@@ -59,7 +55,8 @@ export async function GET(request) {
 // PUT /api/user/profile - Update user profile
 export async function PUT(request) {
   try {
-    const session = await getServerSession();
+    // Pass auth options to getServerSession
+    const session = await getServerSession(authOptions);
     
     if (!session) {
       return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
@@ -69,13 +66,7 @@ export async function PUT(request) {
     let userId = session.user?.id;
     
     if (!userId) {
-      // Fallback for development
-      const firstUser = await prisma.user.findFirst();
-      if (firstUser) {
-        userId = firstUser.id;
-      } else {
-        return NextResponse.json({ error: 'Usuario no encontrado' }, { status: 404 });
-      }
+      return NextResponse.json({ error: 'ID de usuario no encontrado en la sesión' }, { status: 401 });
     }
     
     // Get the user data from the request
