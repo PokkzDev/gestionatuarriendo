@@ -12,6 +12,8 @@ export default function Navbar() {
   const { data: session, status } = useSession();
   const userMenuRef = useRef(null);
   const userButtonRef = useRef(null);
+  const mainMenuRef = useRef(null);
+  const menuButtonRef = useRef(null);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -25,9 +27,10 @@ export default function Navbar() {
     await signOut({ redirect: true, callbackUrl: '/' });
   };
 
-  // Handle clicks outside the user menu
+  // Handle clicks outside both menus
   useEffect(() => {
     const handleClickOutside = (event) => {
+      // Handle user menu clicks
       if (
         isUserMenuOpen &&
         userMenuRef.current &&
@@ -36,20 +39,33 @@ export default function Navbar() {
       ) {
         setIsUserMenuOpen(false);
       }
+      
+      // Handle main menu clicks
+      if (
+        isMenuOpen &&
+        mainMenuRef.current &&
+        !mainMenuRef.current.contains(event.target) &&
+        !menuButtonRef.current.contains(event.target)
+      ) {
+        setIsMenuOpen(false);
+      }
     };
 
     document.addEventListener('mousedown', handleClickOutside);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [isUserMenuOpen]);
+  }, [isUserMenuOpen, isMenuOpen]);
 
-  // Custom Link component that closes the menu when clicked
+  // Custom Link component that closes both menus when clicked
   const MenuLink = ({ href, children, className }) => (
     <Link
       href={href}
       className={className}
-      onClick={() => setIsUserMenuOpen(false)}
+      onClick={() => {
+        setIsUserMenuOpen(false);
+        setIsMenuOpen(false);
+      }}
     >
       {children}
     </Link>
@@ -63,6 +79,7 @@ export default function Navbar() {
         </Link>
 
         <button 
+          ref={menuButtonRef}
           className={styles.menuButton} 
           onClick={toggleMenu}
           aria-label="Toggle menu"
@@ -74,7 +91,10 @@ export default function Navbar() {
           </div>
         </button>
 
-        <div className={`${styles.navLinks} ${isMenuOpen ? styles.show : ''}`}>
+        <div 
+          ref={mainMenuRef}
+          className={`${styles.navLinks} ${isMenuOpen ? styles.show : ''}`}
+        >
           <div className={styles.mainLinks}>
             
             {status === 'authenticated' && (
