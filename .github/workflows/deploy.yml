@@ -73,7 +73,7 @@ jobs:
         # Stop and delete existing process if it exists
         pm2 describe gestionatuarriendo > /dev/null 2>&1 && pm2 delete gestionatuarriendo
         
-        # Start the Next.js application with PM2
+        # Start the Next.js app with PM2
         NODE_ENV=production pm2 start npm --name "gestionatuarriendo" -- start -- -p 3003
         
         # Save the PM2 process list and ensure it persists across reboots
