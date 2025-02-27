@@ -1,0 +1,903 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 60px); /* Adjust for navbar height */
+  width: 100%;
+  padding-top: 10px;
+  position: relative; /* Add this to contain the sidebar */
+}
+
+@media (min-width: 769px) {
+  .container {
+    flex-direction: row;
+    padding: 20px;
+  }
+}
+
+.sidebar {
+  background-color: #f5f5f5;
+  transition: transform 0.3s ease;
+}
+
+@media (min-width: 769px) {
+  .sidebar {
+    width: 250px;
+    padding: 20px;
+    margin-right: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.mainContent {
+  flex: 1;
+  padding: 20px;
+  overflow-x: hidden;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.expenseTypeList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.expenseTypeButton {
+  display: flex;
+  align-items: center;
+  padding: 12px 15px;
+  border-radius: 8px;
+  background-color: white;
+  border: 1px solid #e0e0e0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+.expenseTypeButton:hover {
+  background-color: #f0f0f0;
+  transform: translateY(-2px);
+}
+
+.expenseTypeButton.active {
+  background-color: #e6f7ff;
+  border-color: #1890ff;
+  color: #1890ff;
+}
+
+.expenseIcon {
+  margin-right: 10px;
+  font-size: 1.2rem;
+}
+
+.expenseLabel {
+  font-weight: 500;
+}
+
+.contentArea {
+  background-color: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  min-height: 500px;
+}
+
+/* Internet Expenses Component Styles */
+.expenseTypeContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.expenseTypeTitle {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.chartContainer {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  height: 300px;
+}
+
+.addExpenseSection {
+  margin: 16px 0;
+}
+
+.addButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #1890ff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 10px 16px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.addButton:hover {
+  background-color: #40a9ff;
+}
+
+.expenseForm {
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+.expenseForm h3 {
+  margin-top: 0;
+  margin-bottom: 16px;
+  font-size: 1.2rem;
+  color: #333;
+}
+
+.formGroup {
+  margin-bottom: 16px;
+}
+
+.formGroup label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 500;
+  color: #555;
+}
+
+.formInput {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.formActions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.submitButton {
+  background-color: #52c41a;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 10px 16px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.submitButton:hover {
+  background-color: #73d13d;
+}
+
+.cancelButton {
+  background-color: #f5f5f5;
+  color: #333;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  padding: 10px 16px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.cancelButton:hover {
+  background-color: #e8e8e8;
+}
+
+.expensesList {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.expensesList h3 {
+  margin-top: 0;
+  margin-bottom: 16px;
+  font-size: 1.2rem;
+  color: #333;
+}
+
+.expensesTable {
+  width: 100%;
+  border-collapse: collapse;
+  overflow-x: auto;
+}
+
+.expenseHeader {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr 0.5fr;
+  padding: 12px 8px;
+  background-color: #f5f5f5;
+  font-weight: 600;
+  border-radius: 4px;
+  margin-bottom: 8px;
+}
+
+.expenseItem {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr 0.5fr;
+  padding: 12px 8px;
+  border-bottom: 1px solid #eee;
+  align-items: center;
+}
+
+.expenseItem:last-child {
+  border-bottom: none;
+}
+
+.expenseActions {
+  display: flex;
+  gap: 8px;
+}
+
+.actionButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #999;
+  transition: color 0.2s;
+  padding: 4px;
+}
+
+.actionButton:hover {
+  color: #1890ff;
+}
+
+.actionButton:last-child:hover {
+  color: #ff4d4f;
+}
+
+.errorText {
+  color: #ff4d4f;
+  font-weight: 500;
+}
+
+/* Authentication Error Styles */
+.authErrorContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.authErrorIcon {
+  font-size: 3rem;
+  color: #faad14;
+  margin-bottom: 16px;
+}
+
+.authErrorContainer h2 {
+  font-size: 1.5rem;
+  margin-bottom: 12px;
+  color: #333;
+}
+
+.authErrorContainer p {
+  margin-bottom: 24px;
+  color: #666;
+}
+
+.loginButton {
+  display: inline-block;
+  background-color: #1890ff;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.loginButton:hover {
+  background-color: #40a9ff;
+}
+
+/* Edit and Delete Styles */
+.editInput {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #1890ff;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.saveButton {
+  color: #52c41a;
+}
+
+.saveButton:hover {
+  color: #73d13d;
+}
+
+.confirmButton {
+  color: #52c41a;
+}
+
+.confirmButton:hover {
+  color: #73d13d;
+}
+
+.deleteConfirmation {
+  grid-column: span 3;
+  color: #ff4d4f;
+  font-weight: 500;
+  text-align: left;
+}
+
+/* Make the expense item in delete confirmation mode stand out */
+.expenseItem:has(.deleteConfirmation) {
+  background-color: #fff1f0;
+  border-radius: 4px;
+}
+
+/* Make the expense item in edit mode stand out */
+.expenseItem:has(.editInput) {
+  background-color: #e6f7ff;
+  border-radius: 4px;
+}
+
+/* Responsive styles for different screen sizes */
+@media (max-width: 992px) {
+  .chartContainer {
+    height: 250px;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 0;
+  }
+
+  .mainContent {
+    padding: 15px;
+    width: 100%;
+    position: relative;
+  }
+
+  .contentArea {
+    margin-top: 50px; /* Increased to make room for the larger button */
+  }
+
+  .sidebar {
+    position: fixed;
+    top: 60px; /* Start after navbar */
+    left: 0;
+    height: calc(100vh - 60px); /* Subtract navbar height */
+    width: 280px;
+    z-index: 1000;
+    background-color: white;
+    padding: 20px;
+    transform: translateX(-100%);
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
+  }
+
+  .sidebarShow {
+    transform: translateX(0);
+  }
+
+  /* Overlay when sidebar is open */
+  .container::before {
+    content: '';
+    position: fixed;
+    top: 60px; /* Start after navbar */
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999; /* Just below sidebar */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    pointer-events: none;
+  }
+
+  .sidebarOpen::before {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  .expenseTypeList {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .expenseTypeButton {
+    flex: 0 0 calc(33.333% - 8px);
+    font-size: 0.9rem;
+    padding: 10px;
+    justify-content: center;
+  }
+
+  .expenseIcon {
+    margin-right: 6px;
+  }
+
+  .chartContainer {
+    height: 220px;
+  }
+
+  .expenseTypeTitle {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .container {
+    padding: 0;
+  }
+
+  .mainContent {
+    padding: 10px;
+  }
+
+  .contentArea {
+    padding: 15px;
+  }
+
+  .expenseTypeButton {
+    flex: 0 0 calc(50% - 8px);
+    font-size: 0.85rem;
+  }
+
+  .expenseTypeTitle {
+    font-size: 1.3rem;
+  }
+
+  .chartContainer {
+    height: 200px;
+    padding: 10px;
+  }
+
+  .expenseHeader, .expenseItem {
+    grid-template-columns: 1fr 1.5fr 0.7fr;
+    font-size: 0.9rem;
+  }
+
+  .expenseHeader > span:nth-child(4), 
+  .expenseItem > span:nth-child(4) {
+    display: none;
+  }
+
+  .expenseActions {
+    display: flex;
+    position: absolute;
+    right: 15px;
+    margin-top: -40px;
+  }
+
+  .expenseItem {
+    position: relative;
+    padding-bottom: 30px;
+  }
+
+  .formActions {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .addButton {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Fix for delete confirmation on mobile */
+  .deleteConfirmation {
+    grid-column: span 3;
+    padding-right: 70px;
+    font-size: 0.85rem;
+  }
+
+  .expenseItem:has(.deleteConfirmation) .expenseActions,
+  .expenseItem:has(.editInput) .expenseActions {
+    position: relative;
+    right: auto;
+    margin-top: 0;
+  }
+
+  /* Mobile optimization for buttons */
+  .actionButton {
+    padding: 10px;
+    margin: 0 5px;
+    border-radius: 50%;
+    background-color: #f9f9f9;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .actionButton:hover {
+    transform: scale(1.1);
+  }
+
+  .formInput, .editInput {
+    font-size: 16px; /* Prevents iOS zoom on focus */
+  }
+
+  .expenseForm {
+    margin-top: 10px;
+    padding: 15px;
+  }
+
+  .addExpenseSection {
+    margin: 10px 0;
+  }
+
+  /* Improve tap targets */
+  .submitButton, .cancelButton {
+    padding: 12px 16px;
+    font-size: 16px;
+    min-height: 44px;
+  }
+
+  /* Ensure the chart is fully responsive */
+  .chartContainer canvas {
+    max-width: 100%;
+  }
+
+  /* Mobile menu toggle - text button style */
+  .mobileMenuToggle {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    z-index: 50;
+    background-color: #f5f5f5;
+    border: 1px solid #e0e0e0;
+    color: #666;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 8px 12px;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+
+  .toggleLabel {
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+
+  .mobileMenuToggle:hover {
+    color: #1890ff;
+    background-color: #e6f7ff;
+    border-color: #91d5ff;
+  }
+
+  .mobileMenuToggle {
+    padding: 6px 10px;
+  }
+  
+  .toggleLabel {
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .expenseTypeButton {
+    flex: 0 0 100%;
+  }
+
+  .expenseHeader, .expenseItem {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .expenseHeader > span:nth-child(3),
+  .expenseItem > span:nth-child(3) {
+    display: none;
+  }
+
+  .expenseActions {
+    margin-top: -30px;
+  }
+}
+
+/* Tablet specific adjustments */
+@media (min-width: 577px) and (max-width: 768px) {
+  .expenseTypeButton {
+    padding: 12px 10px;
+  }
+  
+  .chartContainer {
+    padding: 10px;
+  }
+}
+
+/* Better focus states for accessibility */
+.expenseTypeButton:focus,
+.formInput:focus,
+.editInput:focus,
+.actionButton:focus,
+.submitButton:focus,
+.cancelButton:focus {
+  outline: 2px solid #1890ff;
+  outline-offset: 2px;
+}
+
+/* Loading indicator for asynchronous operations */
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100px;
+}
+
+.loadingSpinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  border-left-color: #09f;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Extra small devices fixes */
+@media (max-width: 350px) {
+  .expenseItem {
+    padding-bottom: 40px;
+  }
+}
+
+/* Stats Cards Styles */
+.statsCardsContainer {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.statCard {
+  background-color: white;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+}
+
+.statCardTitle {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 4px;
+}
+
+.statCardValue {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 4px;
+}
+
+.statCardTrend {
+  display: flex;
+  align-items: center;
+  font-size: 0.85rem;
+}
+
+.statCardTrendUp {
+  color: #f5222d;
+}
+
+.statCardTrendDown {
+  color: #52c41a;
+}
+
+.statCardTrendNeutral {
+  color: #1890ff;
+}
+
+/* Responsive styles for stat cards */
+@media (max-width: 992px) {
+  .statsCardsContainer {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 576px) {
+  .statsCardsContainer {
+    grid-template-columns: 1fr;
+  }
+}
+
+.expenseContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.expenseHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.expenseTitle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Expense limit styles */
+.limitContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 20px;
+  border: 1px solid #eaeaea;
+}
+
+.counterContainer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.counterLabel {
+  font-weight: 500;
+  color: #555;
+}
+
+.counterValue {
+  font-weight: 600;
+  color: #1890ff;
+}
+
+.counterLimitReached {
+  font-weight: 600;
+  color: #f5222d;
+}
+
+.upgradePrompt {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  background-color: #fff7e6;
+  border: 1px solid #ffebb3;
+  border-radius: 6px;
+  color: #d4b106;
+}
+
+.upgradeButton {
+  margin-left: auto;
+  padding: 6px 12px;
+  background-color: #f5222d;
+  color: white;
+  border-radius: 4px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background-color 0.2s;
+}
+
+.upgradeButton:hover {
+  background-color: #ff4d4f;
+}
+
+/* Responsive styles for the limit container */
+@media (max-width: 768px) {
+  .limitContainer {
+    padding: 12px;
+  }
+  
+  .upgradePrompt {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .upgradeButton {
+    margin-left: 0;
+    align-self: stretch;
+    text-align: center;
+  }
+}
+
+.addButtonContainer {
+  position: relative;
+  margin-bottom: 16px;
+}
+
+.disabledButton {
+  cursor: not-allowed !important;
+  box-shadow: none !important;
+}
+
+.disabledButton:hover {
+  background-color: #1890ff !important;
+  transform: none !important;
+}
+
+.limitReachedMessage {
+  margin-top: 8px;
+  font-size: 0.9rem;
+  color: #ff4d4f;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.upgradeLink {
+  color: #1890ff;
+  text-decoration: underline;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.upgradeLink:hover {
+  color: #40a9ff;
+}
+
+.unauthorized {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 80vh;
+  text-align: center;
+  padding: 2rem;
+}
+
+.unauthorized h1 {
+  font-size: 1.75rem;
+  margin-bottom: 1rem;
+  color: #e53e3e;
+}
+
+.unauthorized p {
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+  color: #4a5568;
+}
+
+.backLink {
+  display: inline-block;
+  background-color: #4285f4;
+  color: white;
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
+  text-decoration: none;
+  transition: background-color 0.2s;
+}
+
+.backLink:hover {
+  background-color: #3367d6;
+}

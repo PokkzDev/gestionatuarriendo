@@ -1,36 +1,41 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Gestiona Tu Arriendo 🏠
 
-## Getting Started
+## Descripción
+Gestiona Tu Arriendo es una plataforma web que facilita la comunicación y gestión entre arrendadores y arrendatarios. La aplicación permite establecer conexiones directas entre propietarios e inquilinos, simplificando la administración de propiedades y el seguimiento de gastos.
 
-First, run the development server:
+## Características Principales ✨
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+### Para Arrendadores 👔
+- Registro y gestión de propiedades
+- Vinculación con arrendatarios
+- Seguimiento de gastos e ingresos
+- Gestión de peticiones y solicitudes
+- Dashboard personalizado
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Para Arrendatarios 🏡
+- Perfil personalizado
+- Comunicación directa con el arrendador
+- Sistema de peticiones y solicitudes
+- Seguimiento de gastos mensuales: 
+  - Pago de renta
+  - Incidencias en la propiedad
+  - Servicios básicos
+  - Gastos comunes
+  - Reuniones programadas
+  - Cambios en las condiciones de arriendo
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## Tecnologías Utilizadas 🛠️
+- Frontend: React.js con Next.js
+- Backend: Node.js
+- Base de Datos: MySQL
+- Autenticación: NextAuth
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-## Learn More
+## Licencia 📄
+Este proyecto está bajo la Licencia [TIPO_DE_LICENCIA]
 
-To learn more about Next.js, take a look at the following resources:
+## Contacto 📧
+[Información de contacto del equipo/desarrollador]
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+Desarrollado con ❤️ para hacer la gestión de arriendos más fácil y eficiente.

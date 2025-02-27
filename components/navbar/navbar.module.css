@@ -68,25 +68,14 @@
   padding: var(--spacing-xs) var(--spacing-md);
   border-radius: var(--radius-md);
   transition: all 0.2s ease;
-  color: var(--gray-700);
-  text-decoration: none;
-  border: 1px solid var(--gray-300);
-}
-
-.authButton:hover {
-  background-color: var(--gray-100);
-  color: var(--gray-900);
-  border-color: var(--gray-400);
-}
-
-.loginButton {
-  background-color: #2563eb;
   color: white;
+  background-color: var(--gray-800);
+  text-decoration: none;
   border: none;
 }
 
-.loginButton:hover {
-  background-color: #1d4ed8;
+.authButton:hover {
+  background-color: var(--gray-700);
   color: white;
 }
 
@@ -163,47 +152,19 @@
   transform: translateY(-9px) rotate(-45deg);
 }
 
-/* Mobile menu */
-@media (max-width: 768px) {
-  .navLinks {
-    position: fixed;
-    top: 4rem;
-    left: 0;
-    right: 0;
-    background-color: var(--white);
-    padding: var(--spacing-md);
-    flex-direction: column;
-    align-items: stretch;
-    gap: var(--spacing-md);
-    box-shadow: var(--shadow-md);
-    transform: translateY(-100%);
-    opacity: 0;
-    visibility: hidden;
-    transition: var(--transition-normal);
-  }
+/* Font Awesome Icons styling */
+.faIcon {
+  width: 16px;
+  height: 16px;
+  margin-right: var(--spacing-sm);
+  color: inherit;
+}
 
-  .navLinks.show {
-    transform: translateY(0);
-    opacity: 1;
-    visibility: visible;
-  }
-
-  .mainLinks {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .mainLinks a {
-    padding: var(--spacing-sm);
-    text-align: center;
-  }
-
-  .userLinks {
-    justify-content: center;
-    padding-top: var(--spacing-md);
-    border-top: 1px solid var(--gray-200);
-  }
+.logoutIcon {
+  width: 16px;
+  height: 16px;
+  margin-right: var(--spacing-sm);
+  color: inherit;
 }
 
 /* Desktop styles */
@@ -228,5 +189,293 @@
     visibility: visible;
     background: none;
     box-shadow: none;
+  }
+}
+
+.userMenuContainer {
+  position: relative;
+}
+
+.userMenuButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.userAvatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid var(--gray-200);
+  transition: border-color 0.2s ease;
+}
+
+.userAvatar:hover {
+  border-color: var(--primary);
+}
+
+.userMenuDropdown {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  right: 0;
+  width: 240px;
+  background-color: white;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  padding: var(--spacing-md);
+  z-index: 100;
+}
+
+.userInfo {
+  padding-bottom: var(--spacing-md);
+  border-bottom: 1px solid var(--gray-200);
+  margin-bottom: var(--spacing-md);
+}
+
+.userName {
+  font-weight: 600;
+  color: var(--gray-900);
+  margin-bottom: var(--spacing-xs);
+}
+
+.userEmail {
+  font-size: var(--font-size-sm);
+  color: var(--gray-600);
+}
+
+.userMenuLinks {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.userMenuLinks a,
+.logoutButton {
+  padding: var(--spacing-sm);
+  border-radius: var(--radius-md);
+  color: var(--gray-700);
+  font-size: var(--font-size-sm);
+  text-decoration: none;
+  transition: all 0.2s ease;
+  text-align: left;
+  display: flex;
+  align-items: center;
+}
+
+.userMenuLinks a:hover {
+  background-color: var(--gray-50);
+  color: var(--gray-900);
+}
+
+.logoutButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  color: var(--red-600);
+  font-weight: 500;
+  justify-content: flex-start;
+  padding: var(--spacing-sm);
+}
+
+.logoutButton .logoutIcon,
+.userMenuLinks a .faIcon {
+  width: 16px;
+  height: 16px;
+  margin-right: var(--spacing-sm);
+  flex-shrink: 0;
+}
+
+.logoutButton:hover {
+  background-color: var(--red-50);
+  color: var(--red-700);
+}
+
+/* Mobile user menu styles */
+.userInfoMobile {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  margin: var(--spacing-md) 0;
+  padding: var(--spacing-md);
+  border-radius: var(--radius-lg);
+  background-color: var(--gray-50);
+}
+
+.avatarMobile {
+  border-radius: 50%;
+  border: 2px solid var(--gray-200);
+}
+
+.userNameMobile {
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+  color: var(--gray-900);
+  margin: 0;
+}
+
+.userEmailMobile {
+  font-size: var(--font-size-xs);
+  color: var(--gray-600);
+  margin: 0;
+}
+
+.logoutButtonMobile {
+  width: 100%;
+  padding: var(--spacing-md);
+  margin-top: var(--spacing-md);
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  background: linear-gradient(to right, var(--red-50), var(--red-100));
+  color: var(--red-700);
+  border: none;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  font-size: var(--font-size-base);
+  cursor: pointer;
+  transition: var(--transition-normal);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  text-align: left;
+}
+
+.logoutButtonMobile:hover {
+  background: linear-gradient(to right, var(--red-100), var(--red-200));
+  transform: translateY(-1px);
+}
+
+.logoutButtonMobile .logoutIcon {
+  width: 18px;
+  height: 18px;
+  margin-right: var(--spacing-md);
+  flex-shrink: 0;
+}
+
+.faIcon {
+  width: 18px;
+  height: 18px;
+  margin-right: var(--spacing-md);
+}
+
+/* Consolidated Mobile Styles */
+@media (max-width: 768px) {
+  /* Mobile navigation layout */
+  .navLinks {
+    position: fixed;
+    top: 4rem;
+    left: 0;
+    right: 0;
+    background-color: var(--white);
+    padding: var(--spacing-lg);
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--spacing-md);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-150%);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    max-height: calc(100vh - 4rem);
+    overflow-y: auto;
+    z-index: 40;
+  }
+
+  .navLinks.show {
+    transform: translateY(0);
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .mainLinks {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    padding-bottom: var(--spacing-md);
+  }
+  
+  /* Enhanced mobile links */
+  .mainLinks a {
+    width: 100%;
+    padding: var(--spacing-md);
+    text-align: left;
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--spacing-xs);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    font-size: var(--font-size-base);
+  }
+  
+  .mainLinks a:hover, 
+  .mainLinks a:focus {
+    background-color: var(--gray-100);
+  }
+
+  /* User section in mobile */
+  .userLinks {
+    justify-content: center;
+    padding-top: var(--spacing-md);
+    border-top: 1px solid var(--gray-200);
+    width: 100%;
+  }
+  
+  /* Hide desktop user dropdown in mobile */
+  .userMenuDropdown {
+    display: none;
+  }
+  
+  /* Style Login button in mobile */
+  .authButton {
+    width: 100%;
+    display: block;
+    text-align: center;
+    padding: var(--spacing-md);
+    font-size: var(--font-size-base);
+  }
+  
+  /* Enhance user info card */
+  .userInfoMobile {
+    padding: var(--spacing-lg);
+    background: linear-gradient(to right, var(--gray-50), var(--gray-100));
+    border-radius: var(--radius-xl);
+    margin: var(--spacing-lg) 0;
+  }
+  
+  .avatarMobile {
+    width: 48px !important;
+    height: 48px !important;
+    border: 3px solid white;
+    box-shadow: var(--shadow-sm);
+  }
+  
+  /* Consistent icon sizing in mobile */
+  .faIcon,
+  .logoutButtonMobile .logoutIcon {
+    width: 18px;
+    height: 18px;
+    margin-right: var(--spacing-md);
+    flex-shrink: 0;
+  }
+}
+
+/* Animation for menu button */
+@media (max-width: 768px) {
+  .menuButton:focus {
+    outline: none;
+  }
+  
+  .menuButton:focus-visible {
+    outline: 2px solid var(--primary);
+    border-radius: var(--radius-md);
+  }
+  
+  .menuIcon span {
+    transform-origin: center;
+    transition: transform 0.3s ease, opacity 0.2s ease;
   }
 }

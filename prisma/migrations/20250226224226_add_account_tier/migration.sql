@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `User` ADD COLUMN `accountTier` ENUM('FREE', 'PREMIUM', 'ELITE') NOT NULL DEFAULT 'FREE';
