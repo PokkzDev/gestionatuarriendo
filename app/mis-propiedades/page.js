@@ -221,13 +221,22 @@ function MisPropiedadesContent() {
   // Function to delete a property
   const handleDelete = async () => {
     try {
+      // Set loading state if needed
+      setError('');
+      
       const response = await fetch(`/api/properties/${currentProperty.id}`, {
         method: 'DELETE',
       });
 
+      const data = await response.json();
+      
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Error al eliminar propiedad');
+        if (data.error && data.error.includes('tenant')) {
+          // Specific error for tenant-related issues
+          throw new Error(data.error || 'Error al eliminar la propiedad debido a asociaciones con arrendatarios.');
+        } else {
+          throw new Error(data.error || 'Error al eliminar propiedad');
+        }
       }
 
       await fetchProperties();
@@ -474,6 +483,15 @@ function MisPropiedadesContent() {
       <div className={styles.pageHeader}>
         <h1 className={styles.pageTitle}>Mis Propiedades</h1>
         <div className={styles.addButtonContainer}>
+          {reachedLimit && (
+            <div className={styles.compactLimitWarning}>
+              <FaExclamationCircle className={styles.compactLimitIcon} />
+              <span>Límite alcanzado</span>
+              <Link href="/mi-cuenta/plan" className={styles.upgradeLink}>
+                Actualizar plan
+              </Link>
+            </div>
+          )}
           <button 
             className={`${styles.addButton} ${reachedLimit ? styles.addButtonDisabled : ''}`}
             onClick={() => {
@@ -490,43 +508,6 @@ function MisPropiedadesContent() {
           </button>
         </div>
       </div>
-
-      {/* Property limit warning */}
-      {reachedLimit && (
-        <div className={styles.limitWarning}>
-          <div className={styles.limitWarningTitle}>
-            <FaExclamationTriangle className={styles.limitWarningIcon} />
-            Límite de propiedades alcanzado
-          </div>
-          <p className={styles.limitWarningText}>
-            Has alcanzado el límite de {propertyLimit} {propertyLimit === 1 ? 'propiedad' : 'propiedades'} para tu cuenta <strong>{accountTier}</strong>.
-          </p>
-          {accountTier !== 'ELITE' && (
-            <div className={styles.planComparisonContainer}>
-              <div className={styles.planInfo}>
-                <div className={styles.planTitle}>Tu plan actual: <strong>{accountTier}</strong></div>
-                <div className={styles.planLimit}>Límite: {propertyLimit} {propertyLimit === 1 ? 'propiedad' : 'propiedades'}</div>
-              </div>
-              {accountTier === 'FREE' && (
-                <div className={styles.planInfo}>
-                  <div className={styles.planTitle}>Plan PREMIUM</div>
-                  <div className={styles.planLimit}>Límite: 3 propiedades</div>
-                  <Link href="/mi-cuenta/plan" className={styles.upgradePlanButton}>
-                    Actualizar a PREMIUM
-                  </Link>
-                </div>
-              )}
-              <div className={styles.planInfo}>
-                <div className={styles.planTitle}>Plan ELITE</div>
-                <div className={styles.planLimit}>Límite: 10 propiedades</div>
-                <Link href="/mi-cuenta/plan" className={styles.upgradePlanButton}>
-                  Actualizar a ELITE
-                </Link>
-              </div>
-            </div>
-          )}
-        </div>
-      )}
 
       {error && (
         <div className={styles.limitWarning}>
@@ -1249,6 +1230,18 @@ function MisPropiedadesContent() {
               <p className={styles.deleteModalMessage}>
                 ¿Estás seguro que deseas eliminar la propiedad &quot;{currentProperty?.name}&quot;? Esta acción no se puede deshacer.
               </p>
+              
+              {/* Show warning about tenant associations if they exist */}
+              {currentProperty && currentProperty.tenants && currentProperty.tenants.length > 0 && (
+                <div className={styles.warningBox}>
+                  <FaExclamationTriangle className={styles.warningIcon} />
+                  <p className={styles.warningText}>
+                    Esta propiedad tiene {currentProperty.tenants.length} {currentProperty.tenants.length === 1 ? 'arrendatario asociado' : 'arrendatarios asociados'}. 
+                    Al eliminar la propiedad, también se eliminarán todas las asociaciones con arrendatarios.
+                  </p>
+                </div>
+              )}
+              
               <div className={styles.deleteModalButtons}>
                 <button
                   className={styles.cancelButton}
@@ -1318,6 +1311,17 @@ function MisPropiedadesContent() {
                   </p>
                   
                   <form onSubmit={handleTenantSubmit} className={styles.tenantForm}>
+                    <div className={styles.modalDescription}>
+                      <h4 style={{ margin: '0 0 10px 0', color: '#1e293b' }}>Al agregar un arrendatario:</h4>
+                      <ul style={{ paddingLeft: '20px', margin: '0' }}>
+                        <li>Se enviará una invitación por correo electrónico al arrendatario.</li>
+                        <li>El arrendatario deberá crear una cuenta o iniciar sesión para aceptar la invitación.</li>
+                        <li>Una vez aceptada, tendrán acceso a la información de la propiedad y podrán reportar problemas.</li>
+                        <li>Recibirás una notificación cuando acepten la invitación.</li>
+                        <li>Puedes cambiar de arrendatario en cualquier momento enviando una nueva invitación.</li>
+                      </ul>
+                    </div>
+                    
                     <div className={styles.formGroup}>
                       <label className={styles.formLabel} htmlFor="tenantEmail">Email del nuevo arrendatario</label>
                       <input
@@ -1370,6 +1374,17 @@ function MisPropiedadesContent() {
               </div>
             ) : (
               <form onSubmit={handleTenantSubmit} className={styles.modalBody}>
+                <div className={styles.modalDescription}>
+                  <h4 style={{ margin: '0 0 10px 0', color: '#1e293b' }}>Al agregar un arrendatario:</h4>
+                  <ul style={{ paddingLeft: '20px', margin: '0' }}>
+                    <li>Se enviará una invitación por correo electrónico al arrendatario.</li>
+                    <li>El arrendatario deberá crear una cuenta o iniciar sesión para aceptar la invitación.</li>
+                    <li>Una vez aceptada, tendrán acceso a la información de la propiedad y podrán reportar problemas.</li>
+                    <li>Recibirás una notificación cuando acepten la invitación.</li>
+                    <li>Puedes cambiar de arrendatario en cualquier momento enviando una nueva invitación.</li>
+                  </ul>
+                </div>
+                
                 <div className={styles.formGroup}>
                   <label className={styles.formLabel} htmlFor="tenantEmail">Email del arrendatario</label>
                   <input

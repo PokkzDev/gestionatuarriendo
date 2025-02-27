@@ -13,7 +13,9 @@ export async function GET(request, { params }) {
       return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
     }
     
-    const { id } = params;
+    // Properly await params object before accessing id
+    const resolvedParams = await params;
+    const id = resolvedParams.id;
     
     const property = await prisma.property.findUnique({
       where: { id },
@@ -23,8 +25,20 @@ export async function GET(request, { params }) {
       return NextResponse.json({ error: 'Propiedad no encontrada' }, { status: 404 });
     }
     
-    // Check if the property belongs to the authenticated user
-    let userId = session.user?.id;
+    // Get user ID from email (more reliable)
+    let userId = null;
+    if (session.user?.email) {
+      const user = await prisma.user.findUnique({
+        where: { email: session.user.email },
+        select: { id: true }
+      });
+      
+      if (user) {
+        userId = user.id;
+      }
+    } else if (session.user?.id) {
+      userId = session.user.id;
+    }
     
     if (!userId) {
       // Fallback for development
@@ -34,6 +48,7 @@ export async function GET(request, { params }) {
       }
     }
     
+    // Check if the property belongs to the authenticated user
     if (property.userId !== userId) {
       return NextResponse.json({ error: 'No tienes permiso para ver esta propiedad' }, { status: 403 });
     }
@@ -54,7 +69,10 @@ export async function PUT(request, { params }) {
       return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
     }
     
-    const { id } = params;
+    // Properly await params object before accessing id
+    const resolvedParams = await params;
+    const id = resolvedParams.id;
+    
     const data = await request.json();
     
     // Validate required fields
@@ -73,8 +91,20 @@ export async function PUT(request, { params }) {
       return NextResponse.json({ error: 'Propiedad no encontrada' }, { status: 404 });
     }
     
-    // Check if the property belongs to the authenticated user
-    let userId = session.user?.id;
+    // Get user ID from email (more reliable)
+    let userId = null;
+    if (session.user?.email) {
+      const user = await prisma.user.findUnique({
+        where: { email: session.user.email },
+        select: { id: true }
+      });
+      
+      if (user) {
+        userId = user.id;
+      }
+    } else if (session.user?.id) {
+      userId = session.user.id;
+    }
     
     if (!userId) {
       // Fallback for development
@@ -84,6 +114,7 @@ export async function PUT(request, { params }) {
       }
     }
     
+    // Check if the property belongs to the authenticated user
     if (existingProperty.userId !== userId) {
       return NextResponse.json({ 
         error: 'No tienes permiso para editar esta propiedad' 
@@ -131,37 +162,78 @@ export async function DELETE(request, { params }) {
       return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
     }
     
-    const { id } = params;
+    // Properly await params object before accessing id
+    const resolvedParams = await params;
+    const id = resolvedParams.id;
     
     // Check if the property exists
     const existingProperty = await prisma.property.findUnique({
       where: { id },
+      include: {
+        tenants: true, // Include tenants to check if there are any associations
+      },
     });
     
     if (!existingProperty) {
       return NextResponse.json({ error: 'Propiedad no encontrada' }, { status: 404 });
     }
     
-    // Check if the property belongs to the authenticated user
-    let userId = session.user?.id;
+    // Debug session information
+    console.log('Session user:', session.user);
+    console.log('Session user ID:', session.user?.id);
+    console.log('Session user email:', session.user?.email);
+    
+    // Get user ID from email (more reliable)
+    let userId = null;
+    if (session.user?.email) {
+      const user = await prisma.user.findUnique({
+        where: { email: session.user.email },
+        select: { id: true }
+      });
+      
+      if (user) {
+        userId = user.id;
+        console.log('Found user ID from email:', userId);
+      }
+    } else if (session.user?.id) {
+      userId = session.user.id;
+      console.log('Using session user ID:', userId);
+    }
     
     if (!userId) {
       // Fallback for development
       const firstUser = await prisma.user.findFirst();
       if (firstUser) {
         userId = firstUser.id;
+        console.log('Using fallback user ID:', userId);
       }
     }
     
+    console.log('Property user ID:', existingProperty.userId);
+    console.log('Checking if IDs match:', existingProperty.userId === userId);
+    
+    // Check if the property belongs to the authenticated user
     if (existingProperty.userId !== userId) {
       return NextResponse.json({ 
         error: 'No tienes permiso para eliminar esta propiedad' 
       }, { status: 403 });
     }
-    
-    // Delete the property
-    await prisma.property.delete({
-      where: { id },
+
+    // Use a transaction to ensure atomicity when deleting property and related tenants
+    await prisma.$transaction(async (tx) => {
+      // First delete any tenant associations (although Prisma should handle this with cascade)
+      if (existingProperty.tenants && existingProperty.tenants.length > 0) {
+        await tx.propertyTenant.deleteMany({
+          where: { 
+            propertyId: id 
+          },
+        });
+      }
+      
+      // Then delete the property
+      await tx.property.delete({
+        where: { id },
+      });
     });
     
     return NextResponse.json({ 

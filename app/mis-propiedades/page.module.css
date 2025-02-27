@@ -22,11 +22,46 @@
   align-items: center;
 }
 
+.compactLimitWarning {
+  display: flex;
+  align-items: center;
+  background-color: #fff5f5;
+  border: 1px solid #fed7d7;
+  border-radius: 6px;
+  padding: 6px 12px;
+  margin-right: 12px;
+  font-size: 14px;
+  color: #e53e3e;
+}
+
+.compactLimitIcon {
+  margin-right: 6px;
+  font-size: 14px;
+}
+
+.compactLimitWarning .upgradeLink {
+  margin-left: 8px;
+  padding: 2px 8px;
+  background-color: #fff;
+  border-radius: 4px;
+  border: 1px solid #4299e1;
+  color: #4299e1;
+  font-size: 12px;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.compactLimitWarning .upgradeLink:hover {
+  background-color: #4299e1;
+  color: #fff;
+  text-decoration: none;
+}
+
 .addButton {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #4299e1;
+  background: linear-gradient(45deg, #1e293b, #334155);
   color: white;
   border: none;
   border-radius: 8px;
@@ -34,11 +69,14 @@
   font-size: 16px;
   font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.2s ease-in-out;
+  transition: all 0.3s ease;
+  box-shadow: 0 3px 10px rgba(30, 41, 59, 0.3);
 }
 
 .addButton:hover {
-  background-color: #3182ce;
+  background: linear-gradient(45deg, #0f172a, #1e293b);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(30, 41, 59, 0.5);
 }
 
 .addButtonDisabled {
@@ -147,20 +185,22 @@
 }
 
 .actionButton {
-  background: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 10px;
+  background-color: transparent;
+  color: #555;
   border: none;
-  font-size: 16px;
-  cursor: pointer;
-  padding: 8px;
-  color: #718096;
   border-radius: 4px;
-  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
-  margin-left: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
 .actionButton:hover {
-  background-color: #f7fafc;
-  color: #4299e1;
+  background-color: #f5f5f5;
+  transform: translateY(-2px);
 }
 
 .editButton:hover {
@@ -386,24 +426,26 @@
   padding: 8px 16px;
   border: 1px solid #e2e8f0;
   background-color: white;
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: 14px;
   font-weight: 500;
-  color: #4a5568;
+  color: #1e293b;
   cursor: pointer;
-  transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out, transform 0.1s ease-in-out;
+  transition: all 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .cancelButton:hover {
-  background-color: #f7fafc;
+  background-color: #f8fafc;
   border-color: #cbd5e0;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
 }
 
 .cancelButton:active {
-  transform: scale(0.98);
+  transform: translateY(-1px);
 }
 
 .cancelButton:disabled {
@@ -415,31 +457,35 @@
 .submitButton {
   padding: 8px 16px;
   border: none;
-  background-color: #4299e1;
-  border-radius: 6px;
+  background: linear-gradient(45deg, #1e293b, #334155);
+  border-radius: 8px;
   font-size: 14px;
   font-weight: 500;
   color: white;
   cursor: pointer;
-  transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
+  transition: all 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 3px 10px rgba(30, 41, 59, 0.3);
 }
 
 .submitButton:hover {
-  background-color: #3182ce;
+  background: linear-gradient(45deg, #0f172a, #1e293b);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(30, 41, 59, 0.5);
 }
 
 .submitButton:active {
-  transform: scale(0.98);
+  transform: translateY(-1px);
 }
 
 .submitButton:disabled {
-  background-color: #a0aec0;
+  background-color: #cbd5e1;
   cursor: not-allowed;
   opacity: 0.7;
   transform: none;
+  box-shadow: none;
 }
 
 .deleteModalContent {
@@ -453,6 +499,30 @@
   color: #4a5568;
 }
 
+/* Warning box styles */
+.warningBox {
+  display: flex;
+  align-items: flex-start;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  background-color: #fff3cd;
+  border: 1px solid #ffeeba;
+  border-radius: 4px;
+}
+
+.warningIcon {
+  color: #e6a210;
+  font-size: 1.2rem;
+  margin-right: 10px;
+  margin-top: 2px;
+}
+
+.warningText {
+  color: #856404;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
 .deleteModalButtons {
   display: flex;
   gap: 16px;
@@ -462,17 +532,20 @@
 .deleteConfirmButton {
   padding: 8px 16px;
   border: none;
-  background-color: #e53e3e;
-  border-radius: 6px;
+  background: linear-gradient(45deg, #dc2626, #ef4444);
+  border-radius: 8px;
   font-size: 14px;
   font-weight: 500;
   color: white;
   cursor: pointer;
-  transition: background-color 0.2s ease-in-out;
+  transition: all 0.3s ease;
+  box-shadow: 0 3px 8px rgba(239, 68, 68, 0.3);
 }
 
 .deleteConfirmButton:hover {
-  background-color: #c53030;
+  background: linear-gradient(45deg, #b91c1c, #dc2626);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
 }
 
 .emptyState {
@@ -496,7 +569,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background-color: #4299e1;
+  background: linear-gradient(45deg, #1e293b, #334155);
   color: white;
   border: none;
   border-radius: 8px;
@@ -504,11 +577,14 @@
   font-size: 16px;
   font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.2s ease-in-out;
+  transition: all 0.3s ease;
+  box-shadow: 0 3px 10px rgba(30, 41, 59, 0.3);
 }
 
 .emptyStateButton:hover {
-  background-color: #3182ce;
+  background: linear-gradient(45deg, #0f172a, #1e293b);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(30, 41, 59, 0.5);
 }
 
 .limitWarning {
@@ -581,22 +657,25 @@
 }
 
 .upgradePlanButton {
-  background-color: #4299e1;
+  background: linear-gradient(45deg, #1e293b, #334155);
   color: white;
   border: none;
   padding: 8px 16px;
-  border-radius: 4px;
+  border-radius: 8px;
   cursor: pointer;
   font-weight: 500;
   font-size: 14px;
-  transition: background-color 0.2s;
+  transition: all 0.3s ease;
   text-align: center;
   text-decoration: none;
   margin-top: auto;
+  box-shadow: 0 3px 10px rgba(30, 41, 59, 0.3);
 }
 
 .upgradePlanButton:hover {
-  background-color: #3182ce;
+  background: linear-gradient(45deg, #0f172a, #1e293b);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(30, 41, 59, 0.5);
 }
 
 /* Details container styles for parking spots and storage units */
@@ -623,19 +702,21 @@
 }
 
 .addDetailButton {
-  background: none;
-  border: none;
-  color: #4299e1;
+  background-color: transparent;
+  border: 1px solid #1e293b;
+  color: #1e293b;
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
   padding: 4px 8px;
   border-radius: 4px;
-  transition: background-color 0.2s;
+  transition: all 0.3s ease;
 }
 
 .addDetailButton:hover {
-  background-color: #ebf8ff;
+  background-color: #f8fafc;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
 }
 
 .noDetailsMessage {
@@ -679,11 +760,12 @@
   padding: 4px 8px;
   border-radius: 4px;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.3s ease;
 }
 
 .removeDetailButton:hover {
   background-color: #fff5f5;
+  transform: translateY(-2px);
 }
 
 @media (max-width: 768px) {
@@ -699,6 +781,28 @@
   .modalContent {
     width: 95%;
     max-width: none;
+  }
+
+  .pageHeader {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .addButtonContainer {
+    width: 100%;
+    margin-top: 16px;
+    flex-wrap: wrap;
+  }
+
+  .compactLimitWarning {
+    margin-bottom: 12px;
+    margin-right: 0;
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .addButton {
+    width: 100%;
   }
 }
 
