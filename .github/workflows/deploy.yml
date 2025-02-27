@@ -27,7 +27,7 @@ jobs:
         if_key_exists: replace
         config: ${{ secrets.SSH_CONFIG }}
 
-    - name: Debug SSH known_hosts
+    - name: Debug SSH known_hostss
       run: cat ~/.ssh/known_hosts
 
     - name: Set environment variables
