@@ -348,6 +348,20 @@ function MisPropiedadesContent() {
     }
   };
 
+  // Helper function to get role text in Spanish
+  const getRoleText = (role) => {
+    switch (role) {
+      case 'ARRENDATARIO':
+        return 'Arrendatario';
+      case 'PROPIETARIO':
+        return 'Propietario';
+      case 'AMBOS':
+        return 'Arrendatario y Propietario';
+      default:
+        return 'No especificado';
+    }
+  };
+
   const handleTenantSubmit = async (e) => {
     e.preventDefault();
     
@@ -586,14 +600,41 @@ function MisPropiedadesContent() {
                     <span className={styles.propertyDetailLabel}>Estado:</span>
                     <span className={`${styles.propertyStatus} ${statusInfo.className}`}>{statusInfo.text}</span>
                   </div>
+                  
+                  {/* Mostrar información del arrendatario si ha aceptado la invitación */}
+                  {property.tenants && property.tenants.length > 0 && property.tenants[0].status === 'ACCEPTED' && property.tenants[0].tenantUser && (
+                    <div className={styles.tenantSection}>
+                      <div className={styles.tenantHeader}>
+                        <FaCheckCircle className={styles.tenantIcon} style={{ color: '#4caf50' }} />
+                        <h4 className={styles.tenantTitle}>Arrendatario actual</h4>
+                      </div>
+                      <div className={styles.tenantDetails}>
+                        <div className={styles.propertyDetail}>
+                          <span className={styles.propertyDetailLabel}>Nombre:</span>
+                          <span className={styles.propertyDetailValue}>{property.tenants[0].tenantUser.name}</span>
+                        </div>
+                        <div className={styles.propertyDetail}>
+                          <span className={styles.propertyDetailLabel}>Email:</span>
+                          <span className={styles.propertyDetailValue}>{property.tenants[0].tenantEmail}</span>
+                        </div>
+                        <div className={styles.propertyDetail}>
+                          <span className={styles.propertyDetailLabel}>Estado:</span>
+                          <span className={styles.propertyDetailValue} style={{ color: '#4caf50', fontWeight: 'bold' }}>Invitación aceptada</span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
                 <div className={styles.propertyActions}>
                   <button 
-                    className={`${styles.actionButton} ${styles.tenantButton}`}
+                    className={`${styles.actionButton} ${property.tenants && property.tenants.length > 0 && property.tenants[0].status === 'ACCEPTED' && property.tenants[0].tenantUser ? styles.tenantAcceptedButton : styles.tenantButton}`}
                     onClick={() => openTenantModal(property)}
-                    title="Agregar Arrendatario"
+                    title={property.tenants && property.tenants.length > 0 && property.tenants[0].status === 'ACCEPTED' && property.tenants[0].tenantUser ? "Gestionar Arrendatario" : "Agregar Arrendatario"}
                   >
-                    <FaUserPlus />
+                    {property.tenants && property.tenants.length > 0 && property.tenants[0].status === 'ACCEPTED' && property.tenants[0].tenantUser ? 
+                      <FaUserPlus style={{ color: '#4caf50' }} /> : 
+                      <FaUserPlus />
+                    }
                   </button>
                   <button 
                     className={`${styles.actionButton} ${styles.editButton}`}
@@ -1227,36 +1268,121 @@ function MisPropiedadesContent() {
         </div>
       )}
 
-      {/* Add Tenant Modal */}
+      {/* Tenant Modal */}
       {showTenantModal && (
         <div className={styles.modalOverlay}>
           <div className={styles.modalContent}>
             <div className={styles.modalHeader}>
               <h3 className={styles.modalTitle}>
-                <FaUserPlus style={{ marginRight: '8px' }} /> Agregar Arrendatario
+                {currentProperty && currentProperty.tenants && currentProperty.tenants.length > 0 && 
+                 currentProperty.tenants[0].status === 'ACCEPTED' && currentProperty.tenants[0].tenantUser
+                  ? "Gestionar Arrendatario"
+                  : "Agregar Arrendatario"}
               </h3>
               <button 
                 className={styles.closeButton}
                 onClick={() => setShowTenantModal(false)}
-                disabled={tenantInviteStatus.loading}
-                aria-label="Cerrar"
               >
                 <FaTimes />
               </button>
             </div>
-            <form onSubmit={handleTenantSubmit}>
+            
+            {currentProperty && currentProperty.tenants && currentProperty.tenants.length > 0 && currentProperty.tenants[0].status === 'ACCEPTED' && currentProperty.tenants[0].tenantUser ? (
               <div className={styles.modalBody}>
-                <p className={styles.modalDescription}>
-                  <FaInfoCircle style={{ marginRight: '8px', color: '#4299e1' }} />
-                  Ingresa el correo electrónico del arrendatario para vincularlo a esta propiedad. Esto le permitirá ver los detalles de la propiedad en la plataforma.
-                </p>
-                
-                {tenantInviteStatus.success && (
-                  <div className={styles.successMessage}>
-                    <FaCheckCircle style={{ marginRight: '8px' }} />
-                    ¡Arrendatario vinculado exitosamente!
+                <div className={styles.currentTenantInfo}>
+                  <div className={styles.currentTenantHeader}>
+                    <FaCheckCircle className={styles.tenantIcon} style={{ color: '#4caf50' }} />
+                    <h4 className={styles.currentTenantTitle}>Arrendatario actual</h4>
                   </div>
-                )}
+                  
+                  <div className={styles.currentTenantDetails}>
+                    <div className={styles.tenantInfoRow}>
+                      <span className={styles.tenantInfoLabel}>Nombre:</span>
+                      <span className={styles.tenantInfoValue}>{currentProperty.tenants[0].tenantUser.name}</span>
+                    </div>
+                    <div className={styles.tenantInfoRow}>
+                      <span className={styles.tenantInfoLabel}>Email:</span>
+                      <span className={styles.tenantInfoValue}>{currentProperty.tenants[0].tenantEmail}</span>
+                    </div>
+                    <div className={styles.tenantInfoRow}>
+                      <span className={styles.tenantInfoLabel}>Estado:</span>
+                      <span className={styles.tenantInfoValue} style={{ color: '#4caf50', fontWeight: 'bold' }}>Invitación aceptada</span>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className={styles.tenantActionSection}>
+                  <h4 className={styles.changeTenantTitle}>¿Deseas cambiar el arrendatario?</h4>
+                  <p className={styles.changeTenantDescription}>
+                    Puedes enviar una invitación a un nuevo arrendatario. Esto reemplazará al arrendatario actual.
+                  </p>
+                  
+                  <form onSubmit={handleTenantSubmit} className={styles.tenantForm}>
+                    <div className={styles.formGroup}>
+                      <label className={styles.formLabel} htmlFor="tenantEmail">Email del nuevo arrendatario</label>
+                      <input
+                        type="email"
+                        id="tenantEmail"
+                        name="tenantEmail"
+                        className={styles.formInput}
+                        value={tenantEmail}
+                        onChange={(e) => setTenantEmail(e.target.value)}
+                        placeholder="Ingrese el email del nuevo arrendatario"
+                        required
+                      />
+                    </div>
+                    
+                    {tenantInviteStatus.error && (
+                      <div className={styles.errorMessage}>
+                        <FaExclamationCircle style={{ marginRight: '8px' }} />
+                        {tenantInviteStatus.error}
+                      </div>
+                    )}
+                    
+                    {tenantInviteStatus.success && (
+                      <div className={styles.successMessage}>
+                        <FaCheckCircle style={{ marginRight: '8px' }} />
+                        Invitación enviada exitosamente
+                      </div>
+                    )}
+                    
+                    <div className={styles.modalActions}>
+                      <button
+                        type="submit"
+                        className={styles.submitButton}
+                        disabled={tenantInviteStatus.loading}
+                      >
+                        {tenantInviteStatus.loading ? (
+                          <>
+                            <FaSpinner className={styles.loadingIcon} />
+                            Enviando...
+                          </>
+                        ) : (
+                          <>
+                            <FaPaperPlane style={{ marginRight: '8px' }} />
+                            Enviar invitación
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            ) : (
+              <form onSubmit={handleTenantSubmit} className={styles.modalBody}>
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel} htmlFor="tenantEmail">Email del arrendatario</label>
+                  <input
+                    type="email"
+                    id="tenantEmail"
+                    name="tenantEmail"
+                    className={styles.formInput}
+                    value={tenantEmail}
+                    onChange={(e) => setTenantEmail(e.target.value)}
+                    placeholder="Ingrese el email del arrendatario"
+                    required
+                  />
+                </div>
                 
                 {tenantInviteStatus.error && (
                   <div className={styles.errorMessage}>
@@ -1265,65 +1391,34 @@ function MisPropiedadesContent() {
                   </div>
                 )}
                 
-                <div className={styles.formGroup}>
-                  <label className={styles.formLabel} htmlFor="tenantEmail">
-                    <FaEnvelope style={{ marginRight: '6px' }} /> 
-                    Correo electrónico <span style={{ color: '#e53e3e' }}>*</span>
-                  </label>
-                  <div style={{ position: 'relative' }}>
-                    <input
-                      type="email"
-                      id="tenantEmail"
-                      name="tenantEmail"
-                      value={tenantEmail}
-                      onChange={(e) => setTenantEmail(e.target.value)}
-                      placeholder="Ej: arrendatario@ejemplo.com"
-                      className={styles.formInput}
-                      required
-                      disabled={tenantInviteStatus.loading || tenantInviteStatus.success}
-                      style={{ paddingLeft: '32px' }}
-                    />
-                    <FaEnvelope style={{ 
-                      position: 'absolute', 
-                      left: '10px', 
-                      top: '50%', 
-                      transform: 'translateY(-50%)',
-                      color: '#718096',
-                      opacity: tenantInviteStatus.loading || tenantInviteStatus.success ? 0.5 : 1
-                    }} />
+                {tenantInviteStatus.success && (
+                  <div className={styles.successMessage}>
+                    <FaCheckCircle style={{ marginRight: '8px' }} />
+                    Invitación enviada exitosamente
                   </div>
-                  <p className={styles.formHelp}>
-                    <FaInfo style={{ marginRight: '4px', fontSize: '10px' }} />
-                    Se enviará una notificación al arrendatario para que pueda acceder a los detalles de la propiedad.
-                  </p>
+                )}
+                
+                <div className={styles.modalActions}>
+                  <button
+                    type="submit"
+                    className={styles.submitButton}
+                    disabled={tenantInviteStatus.loading}
+                  >
+                    {tenantInviteStatus.loading ? (
+                      <>
+                        <FaSpinner className={styles.loadingIcon} />
+                        Enviando...
+                      </>
+                    ) : (
+                      <>
+                        <FaPaperPlane style={{ marginRight: '8px' }} />
+                        Enviar invitación
+                      </>
+                    )}
+                  </button>
                 </div>
-              </div>
-              <div className={styles.modalFooter}>
-                <button 
-                  type="button" 
-                  className={styles.cancelButton}
-                  onClick={() => setShowTenantModal(false)}
-                  disabled={tenantInviteStatus.loading}
-                >
-                  <FaTimes style={{ marginRight: '6px' }} /> Cancelar
-                </button>
-                <button 
-                  type="submit" 
-                  className={styles.submitButton}
-                  disabled={tenantInviteStatus.loading || tenantInviteStatus.success}
-                >
-                  {tenantInviteStatus.loading ? (
-                    <>
-                      <FaSpinner style={{ marginRight: '6px', animation: 'spin 1s linear infinite' }} /> Enviando...
-                    </>
-                  ) : (
-                    <>
-                      <FaPaperPlane style={{ marginRight: '6px' }} /> Vincular Arrendatario
-                    </>
-                  )}
-                </button>
-              </div>
-            </form>
+              </form>
+            )}
           </div>
         </div>
       )}

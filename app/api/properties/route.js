@@ -32,12 +32,43 @@ export async function GET(request) {
       where: {
         userId: user.id,
       },
+      include: {
+        tenants: {
+          where: {
+            status: 'ACCEPTED'
+          }
+        }
+      },
       orderBy: {
         createdAt: 'desc',
       },
     });
     
     console.log(`API: Fetched ${properties.length} properties for user ID ${user.id}`);
+    
+    // For properties with accepted tenants, fetch the tenant user info
+    for (const property of properties) {
+      if (property.tenants && property.tenants.length > 0) {
+        for (let i = 0; i < property.tenants.length; i++) {
+          const tenant = property.tenants[i];
+          if (tenant.tenantId) {
+            const tenantUser = await prisma.user.findUnique({
+              where: {
+                id: tenant.tenantId
+              },
+              select: {
+                id: true,
+                name: true,
+                email: true,
+                role: true,
+                image: true
+              }
+            });
+            property.tenants[i].tenantUser = tenantUser;
+          }
+        }
+      }
+    }
     
     return NextResponse.json(properties);
   } catch (error) {

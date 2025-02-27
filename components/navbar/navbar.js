@@ -103,6 +103,10 @@ export default function Navbar() {
                   <MenuLink href="/mis-propiedades">Mis Propiedades</MenuLink>
                 )}
                 
+                {(session.user?.role === 'ARRENDATARIO' || session.user?.role === 'AMBOS') && (
+                  <MenuLink href="/mi-arriendo">Mi Arriendo</MenuLink>
+                )}
+                
                 <MenuLink href="/mis-gastos">Mis Gastos</MenuLink>
                 
               </>
