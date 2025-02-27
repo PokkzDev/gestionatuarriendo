@@ -1,11 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import styles from './page.module.css';
 
-export default function VerifyEmailPage() {
+function VerifyEmailContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const token = searchParams.get('token');
@@ -87,5 +87,27 @@ export default function VerifyEmailPage() {
         )}
       </div>
     </div>
+  );
+}
+
+function LoadingVerification() {
+  return (
+    <div className={styles.container}>
+      <div className={styles.card}>
+        <h1 className={styles.title}>Verificación de Correo Electrónico</h1>
+        <div className={styles.loading}>
+          <div className={styles.spinner}></div>
+          <p>Cargando...</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function VerifyEmailPage() {
+  return (
+    <Suspense fallback={<LoadingVerification />}>
+      <VerifyEmailContent />
+    </Suspense>
   );
 } 

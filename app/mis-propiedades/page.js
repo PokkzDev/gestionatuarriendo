@@ -48,7 +48,9 @@ function MisPropiedadesContent() {
     furnished: false,
     totalArea: '',
     rentAmount: '',
-    status: 'AVAILABLE'
+    status: 'AVAILABLE',
+    petsAllowed: false,
+    paymentDueDay: 1
   });
   const [error, setError] = useState('');
   const { data: session, status } = useSession();
@@ -266,7 +268,9 @@ function MisPropiedadesContent() {
       furnished: property.furnished || false,
       totalArea: property.totalArea || '',
       rentAmount: property.rentAmount || '',
-      status: property.status
+      status: property.status,
+      petsAllowed: property.petsAllowed || false,
+      paymentDueDay: property.paymentDueDay || 1
     });
     setShowEditModal(true);
   };
@@ -295,7 +299,9 @@ function MisPropiedadesContent() {
       furnished: false,
       totalArea: '',
       rentAmount: '',
-      status: 'AVAILABLE'
+      status: 'AVAILABLE',
+      petsAllowed: false,
+      paymentDueDay: 1
     });
     setError('');
   };
@@ -601,6 +607,32 @@ function MisPropiedadesContent() {
                         <div className={styles.propertyDetail}>
                           <span className={styles.propertyDetailLabel}>Estado:</span>
                           <span className={styles.propertyDetailValue} style={{ color: '#4caf50', fontWeight: 'bold' }}>Invitación aceptada</span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Mostrar información de invitación pendiente */}
+                  {property.tenants && property.tenants.length > 0 && property.tenants[0].status === 'PENDING' && (
+                    <div className={styles.tenantSection}>
+                      <div className={styles.tenantHeader}>
+                        <FaEnvelope className={styles.tenantIcon} style={{ color: '#ff9800' }} />
+                        <h4 className={styles.tenantTitle}>Invitación pendiente</h4>
+                      </div>
+                      <div className={styles.tenantDetails}>
+                        <div className={styles.propertyDetail}>
+                          <span className={styles.propertyDetailLabel}>Email:</span>
+                          <span className={styles.propertyDetailValue}>{property.tenants[0].tenantEmail}</span>
+                        </div>
+                        <div className={styles.propertyDetail}>
+                          <span className={styles.propertyDetailLabel}>Estado:</span>
+                          <span className={styles.propertyDetailValue} style={{ color: '#ff9800', fontWeight: 'bold' }}>Pendiente de aceptación</span>
+                        </div>
+                        <div className={styles.propertyDetail}>
+                          <span className={styles.propertyDetailLabel}>Enviada:</span>
+                          <span className={styles.propertyDetailValue}>
+                            {property.tenants[0].createdAt ? new Date(property.tenants[0].createdAt).toLocaleDateString() : 'Fecha no disponible'}
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -911,6 +943,32 @@ function MisPropiedadesContent() {
                   />
                   <label className={styles.formCheckboxLabel} htmlFor="furnished">Amoblado</label>
                 </div>
+
+                <div className={styles.formCheckbox} style={{ marginTop: '16px' }}>
+                  <input
+                    type="checkbox"
+                    id="petsAllowed"
+                    name="petsAllowed"
+                    className={styles.formCheckboxInput}
+                    checked={formData.petsAllowed}
+                    onChange={handleInputChange}
+                  />
+                  <label className={styles.formCheckboxLabel} htmlFor="petsAllowed">Permite mascotas</label>
+                </div>
+
+                <div className={styles.formGroup} style={{ marginTop: '16px' }}>
+                  <label className={styles.formLabel} htmlFor="paymentDueDay">Día de pago mensual</label>
+                  <input
+                    type="number"
+                    id="paymentDueDay"
+                    name="paymentDueDay"
+                    className={styles.formInput}
+                    value={formData.paymentDueDay}
+                    onChange={handleInputChange}
+                    min="1"
+                    max="31"
+                  />
+                </div>
               </div>
               <div className={styles.modalFooter}>
                 <button
@@ -1191,6 +1249,32 @@ function MisPropiedadesContent() {
                     onChange={handleInputChange}
                   />
                   <label className={styles.formCheckboxLabel} htmlFor="edit-furnished">Amoblado</label>
+                </div>
+                
+                <div className={styles.formCheckbox} style={{ marginTop: '16px' }}>
+                  <input
+                    type="checkbox"
+                    id="edit-petsAllowed"
+                    name="petsAllowed"
+                    className={styles.formCheckboxInput}
+                    checked={formData.petsAllowed}
+                    onChange={handleInputChange}
+                  />
+                  <label className={styles.formCheckboxLabel} htmlFor="edit-petsAllowed">Permite mascotas</label>
+                </div>
+
+                <div className={styles.formGroup} style={{ marginTop: '16px' }}>
+                  <label className={styles.formLabel} htmlFor="edit-paymentDueDay">Día de pago mensual</label>
+                  <input
+                    type="number"
+                    id="edit-paymentDueDay"
+                    name="paymentDueDay"
+                    className={styles.formInput}
+                    value={formData.paymentDueDay}
+                    onChange={handleInputChange}
+                    min="1"
+                    max="31"
+                  />
                 </div>
               </div>
               <div className={styles.modalFooter}>

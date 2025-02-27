@@ -2,13 +2,15 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem 1rem;
+  background-color: #f8fafc;
 }
 
 .pageTitle {
-  font-size: 2rem;
-  color: #333;
+  font-size: 1.5rem;
+  font-weight: 600;
   margin-bottom: 2rem;
-  border-bottom: 2px solid #f0f0f0;
+  color: #1e293b;
+  border-bottom: 2px solid #f1f5f9;
   padding-bottom: 0.5rem;
 }
 
@@ -19,14 +21,14 @@
   align-items: center;
   justify-content: center;
   min-height: 60vh;
-  color: #666;
+  color: #64748b;
 }
 
 .spinner {
   animation: spin 1.5s linear infinite;
   font-size: 2.5rem;
   margin-bottom: 1rem;
-  color: #3498db;
+  color: #1e293b;
 }
 
 @keyframes spin {
@@ -42,7 +44,7 @@
   justify-content: center;
   min-height: 60vh;
   text-align: center;
-  color: #e74c3c;
+  color: #ef4444;
   padding: 1rem;
 }
 
@@ -59,27 +61,39 @@
   justify-content: center;
   min-height: 60vh;
   text-align: center;
-  color: #7f8c8d;
+  color: #64748b;
   padding: 1rem;
 }
 
 .noRentalIcon {
   font-size: 3rem;
   margin-bottom: 1rem;
-  color: #95a5a6;
+  color: #94a3b8;
 }
 
 /* Property Card */
 .propertyCard {
   background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  border-radius: 12px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
   overflow: hidden;
   margin-bottom: 2rem;
+  animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .propertyHeader {
-  background-color: #3498db;
+  background: linear-gradient(45deg, #1e293b, #334155);
   color: white;
   padding: 1.5rem;
   display: flex;
@@ -94,6 +108,7 @@
 .propertyHeader h2 {
   margin: 0;
   font-size: 1.5rem;
+  font-weight: 600;
 }
 
 .propertyDetails {
@@ -103,7 +118,7 @@
 .detailItem {
   display: flex;
   margin-bottom: 1rem;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid #f1f5f9;
   padding-bottom: 0.75rem;
 }
 
@@ -114,42 +129,53 @@
 }
 
 .detailLabel {
-  font-weight: bold;
+  font-weight: 500;
   min-width: 150px;
-  color: #555;
+  color: #475569;
+}
+
+.detailIcon {
+  color: #0070f3;
+  font-size: 1rem;
+  margin-right: 5px;
+  vertical-align: middle;
 }
 
 .detailValue {
   flex: 1;
+  color: #1e293b;
 }
 
 /* Sections */
 .section {
   background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  border-radius: 12px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
   overflow: hidden;
   margin-bottom: 2rem;
+  animation: fadeIn 0.5s ease-out;
 }
 
 .sectionTitle {
   padding: 1.25rem 1.5rem;
   margin: 0;
   font-size: 1.25rem;
-  border-bottom: 1px solid #f0f0f0;
+  font-weight: 600;
+  border-bottom: 1px solid #f1f5f9;
   display: flex;
   align-items: center;
+  color: #1e293b;
 }
 
 .sectionIcon {
   margin-right: 0.75rem;
-  color: #3498db;
+  color: #1e293b;
 }
 
 .emptyList {
   padding: 2rem;
   text-align: center;
-  color: #7f8c8d;
+  color: #64748b;
 }
 
 /* Payments table */
@@ -159,14 +185,19 @@
 
 .tableHeader {
   display: flex;
-  background-color: #f8f9fa;
-  font-weight: bold;
-  border-bottom: 1px solid #e9ecef;
+  background-color: #f8fafc;
+  font-weight: 600;
+  border-bottom: 1px solid #e2e8f0;
 }
 
 .tableRow {
   display: flex;
-  border-bottom: 1px solid #e9ecef;
+  border-bottom: 1px solid #e2e8f0;
+  transition: all 0.2s ease;
+}
+
+.tableRow:hover {
+  background-color: #f8fafc;
 }
 
 .tableRow:last-child {
@@ -180,32 +211,234 @@
   align-items: center;
 }
 
-/* Payment status */
+/* Payment Due Day Section */
+.paymentDueInfo {
+  display: flex;
+  align-items: center;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 20px;
+}
+
+.calendarIcon {
+  color: #0070f3;
+  font-size: 1.4rem;
+  margin-right: 10px;
+}
+
+/* Payment Status Styles */
 .paymentStatus {
-  padding: 0.35rem 0.75rem;
+  display: inline-block;
+  padding: 5px 10px;
   border-radius: 4px;
-  font-size: 0.85rem;
   font-weight: 500;
+  text-align: center;
+  min-width: 100px;
 }
 
 .paid {
-  background-color: #d4f7e6;
-  color: #1e7e4a;
+  background-color: #e6f7e9;
+  color: #2e7d32;
 }
 
 .pending {
-  background-color: #fff8e1;
-  color: #ff8f00;
+  background-color: #fff9e6;
+  color: #ff9800;
 }
 
 .overdue {
   background-color: #ffebee;
-  color: #c62828;
+  color: #f44336;
+}
+
+.cancelled {
+  background-color: #eeeeee;
+  color: #757575;
 }
 
 /* Contract details */
 .contractDetails {
   padding: 1.5rem;
+}
+
+/* Property Characteristics */
+.characteristicsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.characteristicCard {
+  display: flex;
+  align-items: center;
+  padding: 1.25rem;
+  background-color: #f8fafc;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+}
+
+.characteristicCard:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+.iconContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 45px;
+  margin-right: 0.75rem;
+}
+
+.characteristicIcon {
+  font-size: 1.8rem;
+  color: #1e293b;
+}
+
+.characteristicInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.characteristicValue {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.inlineIdentifier {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #64748b;
+}
+
+.characteristicLabel {
+  font-size: 0.85rem;
+  color: #64748b;
+  margin-top: 0.25rem;
+}
+
+.detailIdentifier {
+  display: block;
+  font-size: 0.75rem;
+  color: #334155;
+  margin-top: 0.25rem;
+  font-style: italic;
+}
+
+.subSectionTitle {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0 0 1rem 0;
+  color: #1e293b;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.additionalFeatures {
+  margin-bottom: 2rem;
+}
+
+.featuresList {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.featureItem {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  background-color: #f1f5f9;
+  color: #64748b;
+  transition: all 0.3s ease;
+}
+
+.featureActive {
+  background-color: #f0f9ff;
+  color: #0c4a6e;
+  border-left: 3px solid #0284c7;
+}
+
+.featureIcon {
+  margin-right: 0.75rem;
+  font-size: 1.1rem;
+}
+
+.amenitiesSection {
+  margin-top: 1.5rem;
+}
+
+.amenitiesList {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.75rem;
+}
+
+.amenityItem {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 0;
+}
+
+.amenityIcon {
+  margin-right: 0.5rem;
+  color: #15803d;
+  font-weight: bold;
+}
+
+/* Buttons */
+.button {
+  background: linear-gradient(45deg, #1e293b, #334155);
+  color: white;
+  border: none;
+  padding: 0.7rem 1.5rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 3px 10px rgba(30, 41, 59, 0.3);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 150px;
+}
+
+.button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(30, 41, 59, 0.5);
+  background: linear-gradient(45deg, #0f172a, #1e293b);
+}
+
+.button:active {
+  transform: translateY(-1px);
+}
+
+.secondaryButton {
+  background-color: white;
+  color: #1e293b;
+  padding: 0.7rem 1.5rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.secondaryButton:hover {
+  background-color: #f8fafc;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
 }
 
 /* Responsive */
@@ -225,4 +458,36 @@
   .tableCell {
     padding: 0.75rem 1rem;
   }
+  
+  .characteristicsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .featuresList, .amenitiesList {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* No data messages */
+.noDataMessage, .noFeaturesMessage, .noAmenitiesMessage {
+  padding: 1.5rem;
+  background-color: #f8fafc;
+  border-radius: 8px;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  border-left: 3px solid #94a3b8;
+}
+
+.noDataIcon {
+  font-size: 1.5rem;
+  margin-right: 1rem;
+  color: #64748b;
+}
+
+.noFeaturesMessage, .noAmenitiesMessage {
+  padding: 1rem;
+  margin: 0.5rem 0 1.5rem;
+  font-size: 0.95rem;
 } 

@@ -1,12 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import styles from './page.module.css';
 
-export default function InvitationPage() {
+function InvitationContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { data: session, status } = useSession();
@@ -178,5 +178,24 @@ export default function InvitationPage() {
         </button>
       </div>
     </div>
+  );
+}
+
+function LoadingInvitation() {
+  return (
+    <div className={styles.container}>
+      <div className={styles.card}>
+        <h1 className={styles.title}>Procesando invitación...</h1>
+        <p className={styles.message}>Por favor espera mientras cargamos la página.</p>
+      </div>
+    </div>
+  );
+}
+
+export default function InvitationPage() {
+  return (
+    <Suspense fallback={<LoadingInvitation />}>
+      <InvitationContent />
+    </Suspense>
   );
 } 

@@ -1,4 +1,4 @@
-import { FaCalendarAlt } from 'react-icons/fa';
+import { FaCalendarAlt, FaFileAlt } from 'react-icons/fa';
 import styles from '../page.module.css';
 
 const ContractSection = ({ contract, formatDate }) => {
@@ -30,6 +30,15 @@ const ContractSection = ({ contract, formatDate }) => {
             <div className={styles.detailItem}>
               <span className={styles.detailLabel}>Duración:</span>
               <span className={styles.detailValue}>{contract.duration} {contract.duration === 1 ? 'mes' : 'meses'}</span>
+            </div>
+
+            <div style={{ marginTop: '20px', display: 'flex', gap: '10px' }}>
+              <button className={styles.button} onClick={() => alert('Ver contrato')}>
+                <FaFileAlt style={{ marginRight: '8px' }} /> Ver Contrato
+              </button>
+              <button className={styles.secondaryButton} onClick={() => alert('Descargar contrato')}>
+                Descargar
+              </button>
             </div>
           </>
         ) : (

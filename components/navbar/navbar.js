@@ -5,6 +5,9 @@ import Image from 'next/image';
 import styles from './navbar.module.css';
 import { useState, useRef, useEffect } from 'react';
 import { useSession, signOut } from 'next-auth/react';
+// Import Font Awesome
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSignOutAlt, faUser, faCog } from '@fortawesome/free-solid-svg-icons';
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -14,6 +17,7 @@ export default function Navbar() {
   const userButtonRef = useRef(null);
   const mainMenuRef = useRef(null);
   const menuButtonRef = useRef(null);
+  const [isMobile, setIsMobile] = useState(false);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -26,6 +30,20 @@ export default function Navbar() {
   const handleLogout = async () => {
     await signOut({ redirect: true, callbackUrl: '/' });
   };
+
+  // Check if mobile view
+  useEffect(() => {
+    const checkIfMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    
+    checkIfMobile();
+    window.addEventListener('resize', checkIfMobile);
+    
+    return () => {
+      window.removeEventListener('resize', checkIfMobile);
+    };
+  }, []);
 
   // Handle clicks outside both menus
   useEffect(() => {
@@ -58,7 +76,7 @@ export default function Navbar() {
   }, [isUserMenuOpen, isMenuOpen]);
 
   // Custom Link component that closes both menus when clicked
-  const MenuLink = ({ href, children, className }) => (
+  const MenuLink = ({ href, children, className, icon }) => (
     <Link
       href={href}
       className={className}
@@ -67,6 +85,7 @@ export default function Navbar() {
         setIsMenuOpen(false);
       }}
     >
+      {icon && <FontAwesomeIcon icon={icon} className={styles.faIcon} />}
       {children}
     </Link>
   );
@@ -109,6 +128,33 @@ export default function Navbar() {
                 
                 <MenuLink href="/mis-gastos">Mis Gastos</MenuLink>
                 
+                {/* Display user menu items directly in mobile view */}
+                {isMobile && status === 'authenticated' && (
+                  <>
+                    <div className={styles.userInfoMobile}>
+                      <Image
+                        src={session.user?.image || "/default-avatar.png"}
+                        alt="User avatar"
+                        width={40}
+                        height={40}
+                        className={styles.avatarMobile}
+                      />
+                      <div>
+                        <p className={styles.userNameMobile}>{session.user?.name || 'Usuario'}</p>
+                        <p className={styles.userEmailMobile}>{session.user?.email || 'usuario@example.com'}</p>
+                      </div>
+                    </div>
+                    <MenuLink href="/profile" icon={faUser}>Mi Perfil</MenuLink>
+                    <MenuLink href="/mi-cuenta/configuraciones" icon={faCog}>Configuraciones</MenuLink>
+                    <button 
+                      className={styles.logoutButtonMobile}
+                      onClick={handleLogout}
+                    >
+                      <FontAwesomeIcon icon={faSignOutAlt} className={styles.logoutIcon} />
+                      Cerrar Sesión
+                    </button>
+                  </>
+                )}
               </>
             )}
             
@@ -120,43 +166,47 @@ export default function Navbar() {
                 Iniciar Sesión
               </MenuLink>
             ) : (
-              <div className={styles.userMenuContainer}>
-                <button 
-                  ref={userButtonRef}
-                  className={styles.userMenuButton}
-                  onClick={toggleUserMenu}
-                  aria-label="User menu"
-                >
-                  <div className={styles.userAvatar}>
-                    <Image
-                      src={session.user?.image || "/default-avatar.png"}
-                      alt="User avatar"
-                      width={32}
-                      height={32}
-                      className={styles.avatar}
-                    />
-                  </div>
-                </button>
-                
-                {isUserMenuOpen && (
-                  <div ref={userMenuRef} className={styles.userMenuDropdown}>
-                    <div className={styles.userInfo}>
-                      <p className={styles.userName}>{session.user?.name || 'Usuario'}</p>
-                      <p className={styles.userEmail}>{session.user?.email || 'usuario@example.com'}</p>
+              // Only show dropdown user menu in desktop view
+              !isMobile && (
+                <div className={styles.userMenuContainer}>
+                  <button 
+                    ref={userButtonRef}
+                    className={styles.userMenuButton}
+                    onClick={toggleUserMenu}
+                    aria-label="User menu"
+                  >
+                    <div className={styles.userAvatar}>
+                      <Image
+                        src={session.user?.image || "/default-avatar.png"}
+                        alt="User avatar"
+                        width={32}
+                        height={32}
+                        className={styles.avatar}
+                      />
                     </div>
-                    <div className={styles.userMenuLinks}>
-                      <MenuLink href="/profile">Mi Perfil</MenuLink>
-                      <MenuLink href="/mi-cuenta/preferencias">Mi Cuenta</MenuLink>
-                      <button 
-                        className={styles.logoutButton}
-                        onClick={handleLogout}
-                      >
-                        Cerrar Sesión
-                      </button>
+                  </button>
+                  
+                  {isUserMenuOpen && (
+                    <div ref={userMenuRef} className={styles.userMenuDropdown}>
+                      <div className={styles.userInfo}>
+                        <p className={styles.userName}>{session.user?.name || 'Usuario'}</p>
+                        <p className={styles.userEmail}>{session.user?.email || 'usuario@example.com'}</p>
+                      </div>
+                      <div className={styles.userMenuLinks}>
+                        <MenuLink href="/profile" icon={faUser}>Mi Perfil</MenuLink>
+                        <MenuLink href="/mi-cuenta/configuraciones" icon={faCog}>Configuraciones</MenuLink>
+                        <button 
+                          className={styles.logoutButton}
+                          onClick={handleLogout}
+                        >
+                          <FontAwesomeIcon icon={faSignOutAlt} className={styles.logoutIcon} />
+                          Cerrar Sesión
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                )}
-              </div>
+                  )}
+                </div>
+              )
             )}
           </div>
         </div>

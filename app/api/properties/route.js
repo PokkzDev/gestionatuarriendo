@@ -34,8 +34,16 @@ export async function GET(request) {
       },
       include: {
         tenants: {
-          where: {
-            status: 'ACCEPTED'
+          orderBy: {
+            createdAt: 'desc'
+          },
+          select: {
+            id: true,
+            propertyId: true,
+            tenantId: true,
+            tenantEmail: true,
+            status: true,
+            createdAt: true
           }
         }
       },
@@ -46,12 +54,12 @@ export async function GET(request) {
     
     console.log(`API: Fetched ${properties.length} properties for user ID ${user.id}`);
     
-    // For properties with accepted tenants, fetch the tenant user info
+    // For properties with tenants, fetch the tenant user info for accepted invitations
     for (const property of properties) {
       if (property.tenants && property.tenants.length > 0) {
         for (let i = 0; i < property.tenants.length; i++) {
           const tenant = property.tenants[i];
-          if (tenant.tenantId) {
+          if (tenant.tenantId && tenant.status === 'ACCEPTED') {
             const tenantUser = await prisma.user.findUnique({
               where: {
                 id: tenant.tenantId
@@ -144,6 +152,8 @@ export async function POST(request) {
         totalArea: data.totalArea ? parseFloat(data.totalArea) : null,
         rentAmount: data.rentAmount ? parseFloat(data.rentAmount) : null,
         status: data.status || 'AVAILABLE',
+        petsAllowed: Boolean(data.petsAllowed),
+        paymentDueDay: parseInt(data.paymentDueDay) || 1,
         userId: user.id,
       },
     });

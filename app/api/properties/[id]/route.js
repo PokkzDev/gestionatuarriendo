@@ -141,6 +141,8 @@ export async function PUT(request, { params }) {
         totalArea: data.totalArea ? parseFloat(data.totalArea) : null,
         rentAmount: data.rentAmount ? parseFloat(data.rentAmount) : null,
         status: data.status,
+        petsAllowed: Boolean(data.petsAllowed),
+        paymentDueDay: parseInt(data.paymentDueDay) || 1,
       },
     });
     
