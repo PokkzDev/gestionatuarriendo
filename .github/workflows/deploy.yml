@@ -27,8 +27,10 @@ jobs:
         if_key_exists: replace
         config: ${{ secrets.SSH_CONFIG }}
 
-    - name: Debug SSH known_hostss
-      run: cat ~/.ssh/known_hosts
+    - name: Debug SSH setup
+      run: |
+        echo "Testing SSH connection..."
+        ssh -v root@${{ secrets.VPS_HOST }} 'echo "SSH connection successful"'
 
     - name: Set environment variables
       run: |
@@ -43,8 +45,13 @@ jobs:
         NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }}
         EOF
 
-    - name: Sync files to VPSs
-      run: rsync -avz --delete --exclude='.git' --exclude='node_modules' ./ root@${{ secrets.VPS_HOST }}:/var/www/gestionatuar_usr/data/www/gestionatuarriendo.cl/
+    - name: Sync files to VPS
+      run: |
+        rsync -avz --delete \
+          -e "ssh -o StrictHostKeyChecking=accept-new -v" \
+          --exclude='.git' \
+          --exclude='node_modules' \
+          ./ root@${{ secrets.VPS_HOST }}:/var/www/gestionatuar_usr/data/www/gestionatuarriendo.cl/
 
     - name: Deploy to VPS
       run: |
