@@ -61,7 +61,7 @@ jobs:
         # Clean .next directory if it exists
         rm -rf .next
         
-        # Build the application
+        # Build the applications
         NODE_ENV=production npm run build
         
         # Verify build directory exists
