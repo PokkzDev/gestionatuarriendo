@@ -1,0 +1,108 @@
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 80vh;
+  padding: 2rem;
+}
+
+.card {
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+  max-width: 500px;
+  width: 100%;
+  text-align: center;
+}
+
+.title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 1.5rem;
+}
+
+.message {
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #555;
+  margin-bottom: 1.5rem;
+}
+
+.description {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: #666;
+  margin-bottom: 1.5rem;
+  background-color: #f8fafc;
+  padding: 0.75rem;
+  border-radius: 5px;
+  border-left: 3px solid #4299e1;
+}
+
+.errorMessage {
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #e53935;
+  margin-bottom: 1.5rem;
+}
+
+.button {
+  display: inline-block;
+  background-color: #1976d2;
+  color: #fff;
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+}
+
+.button:hover {
+  background-color: #1565c0;
+}
+
+.button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.link {
+  display: inline-block;
+  color: #1976d2;
+  font-weight: 600;
+  text-decoration: none;
+  margin-top: 1rem;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+.actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+@media (max-width: 600px) {
+  .card {
+    padding: 1.5rem;
+  }
+  
+  .title {
+    font-size: 1.5rem;
+  }
+  
+  .actions {
+    flex-direction: column;
+  }
+  
+  .button {
+    width: 100%;
+  }
+} 

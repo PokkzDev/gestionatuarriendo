@@ -11,12 +11,16 @@ import { FaEye, FaEyeSlash } from 'react-icons/fa';
 function LoginForm() {
   const searchParams = useSearchParams();
   const mode = searchParams.get('mode');
+  const invitationId = searchParams.get('invitationId');
+  const callbackUrl = searchParams.get('callbackUrl');
+  const prefilledEmail = searchParams.get('email');
   
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [isLogin, setIsLogin] = useState(mode !== 'registro');
   const [role, setRole] = useState('ARRENDATARIO');
   const [password, setPassword] = useState('');
+  const [email, setEmail] = useState(prefilledEmail || '');
   const [showPassword, setShowPassword] = useState(false);
   const [passwordStrength, setPasswordStrength] = useState({
     score: 0,
@@ -29,7 +33,10 @@ function LoginForm() {
 
   useEffect(() => {
     setIsLogin(mode !== 'registro');
-  }, [mode]);
+    if (prefilledEmail) {
+      setEmail(prefilledEmail);
+    }
+  }, [mode, prefilledEmail]);
 
   // Function to check password strength
   const checkPasswordStrength = (password) => {
@@ -98,9 +105,19 @@ function LoginForm() {
     setUnverifiedEmail('');
     setLoading(true);
 
+    // Instead of getting email from form which might be disabled
+    // and not included in formData, use the email from state
     const formData = new FormData(e.target);
-    const email = formData.get('email');
     const passwordFromForm = formData.get('password');
+    
+    // Use email from state which is already prefilled from URL params
+    const emailToUse = email; 
+
+    if (!emailToUse || !passwordFromForm) {
+      setError('Correo y contraseña son requeridos');
+      setLoading(false);
+      return;
+    }
 
     if (!isLogin) {
       // Validate password strength for registration
@@ -111,16 +128,23 @@ function LoginForm() {
       }
 
       try {
+        // Include invitation ID if available
+        const registrationData = {
+          email: emailToUse,
+          password: passwordFromForm,
+          role,
+        };
+        
+        if (invitationId) {
+          registrationData.invitationId = invitationId;
+        }
+        
         const response = await fetch('/api/auth/register', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({
-            email,
-            password: passwordFromForm,
-            role,
-          }),
+          body: JSON.stringify(registrationData),
         });
 
         const data = await response.json();
@@ -147,7 +171,7 @@ function LoginForm() {
 
     try {
       const result = await signIn('credentials', {
-        email,
+        email: emailToUse,
         password: passwordFromForm,
         redirect: false
       });
@@ -155,13 +179,19 @@ function LoginForm() {
       if (result?.error) {
         // Check if the error is about unverified email
         if (result.error.includes('Correo electrónico no verificado')) {
-          setUnverifiedEmail(email);
+          setUnverifiedEmail(emailToUse);
         }
         setError(result.error);
         setLoading(false);
       } else {
-        // Redirect manually
-        window.location.href = '/';
+        // Redirect based on presence of invitation or callback
+        if (invitationId) {
+          window.location.href = `/invitacion?id=${invitationId}`;
+        } else if (callbackUrl) {
+          window.location.href = callbackUrl;
+        } else {
+          window.location.href = '/';
+        }
       }
     } catch (error) {
       setError('Ha ocurrido un error. Por favor intente más tarde.');
@@ -202,6 +232,9 @@ function LoginForm() {
     }
   };
 
+  // Display invitation context if applicable
+  const isInvitationFlow = Boolean(invitationId);
+
   return (
     <div className={styles.container}>
       <header className={styles.header}>
@@ -222,18 +255,33 @@ function LoginForm() {
       <div className={styles.imageSection}>
         <div className={styles.imageSectionOverlay}>
           <h1 className={styles.welcomeText}>
-            {isLogin ? '¡Bienvenido de nuevo!' : '¡Únete a nosotros!'}
+            {isInvitationFlow 
+              ? '¡Has recibido una invitación!' 
+              : isLogin 
+                ? '¡Bienvenido de nuevo!' 
+                : '¡Únete a nosotros!'}
           </h1>
           <p className={styles.welcomeSubtext}>
-            {isLogin
-              ? 'Gestiona tus propiedades y arriendos de manera eficiente con nuestra plataforma.'
-              : 'Simplifica la gestión de tus propiedades y la comunicación con tus arrendatarios.'}
+            {isInvitationFlow
+              ? 'Inicia sesión o regístrate para acceder a la propiedad compartida.'
+              : isLogin
+                ? 'Gestiona tus propiedades y arriendos de manera eficiente con nuestra plataforma.'
+                : 'Simplifica la gestión de tus propiedades y la comunicación con tus arrendatarios.'}
           </p>
         </div>
       </div>
 
       <div className={styles.formSection}>
         <div className={styles.formContainer}>
+          {isInvitationFlow && (
+            <div className={styles.invitationBanner}>
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16" style={{ marginRight: '8px' }}>
+                <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2zm13 2.383-4.708 2.825L15 11.105V5.383zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741zM1 11.105l4.708-2.897L1 5.383v5.722z"/>
+              </svg>
+              Has recibido una invitación para acceder a una propiedad
+            </div>
+          )}
+          
           <div className={styles.modeSwitch}>
             <button
               className={`${styles.modeSwitchButton} ${isLogin ? styles.active : ''}`}
@@ -251,11 +299,14 @@ function LoginForm() {
 
           <h1 className={styles.title}>
             {isLogin ? 'Iniciar Sesión' : 'Crear Cuenta'}
+            {isInvitationFlow && <span className={styles.invitationTag}>Para acceder a la invitación</span>}
           </h1>
           <p className={styles.subtitle}>
-            {isLogin
-              ? 'Ingresa tus credenciales para continuar'
-              : 'Completa tus datos para comenzar'}
+            {isInvitationFlow
+              ? 'Para acceder a la propiedad compartida'
+              : isLogin
+                ? 'Ingresa tus credenciales para continuar'
+                : 'Completa tus datos para comenzar'}
           </p>
 
           {!isLogin && (
@@ -300,9 +351,17 @@ function LoginForm() {
                 name="email"
                 type="email"
                 required
-                className={styles.input}
+                className={`${styles.input} ${isInvitationFlow && prefilledEmail ? styles.inputReadOnly : ''}`}
                 placeholder="correo@ejemplo.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                readOnly={isInvitationFlow && prefilledEmail}
               />
+              {isInvitationFlow && prefilledEmail && (
+                <p className={styles.formHelp}>
+                  Este correo corresponde a la invitación recibida y no puede ser modificado.
+                </p>
+              )}
             </div>
 
             <div className={styles.inputGroup}>

@@ -115,6 +115,8 @@ model Property {
   userId String @db.VarChar(36)
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   
+  tenants PropertyTenant[]
+  
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -133,6 +135,27 @@ enum PropertyStatus {
   AVAILABLE
   OCCUPIED
   UNDER_MAINTENANCE
+}
+
+model PropertyTenant {
+  id String @id @default(uuid()) @db.VarChar(36)
+  propertyId String @db.VarChar(36)
+  tenantEmail String
+  tenantId String? @db.VarChar(36)
+  status InvitationStatus @default(PENDING)
+  
+  property Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@unique([propertyId, tenantEmail])
+}
+
+enum InvitationStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
 }
 
 

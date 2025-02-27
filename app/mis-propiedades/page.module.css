@@ -171,6 +171,15 @@
   color: #e53e3e;
 }
 
+.tenantButton {
+  background-color: #4caf50;
+  margin-right: 0.5rem;
+}
+
+.tenantButton:hover {
+  background-color: #388e3c;
+}
+
 /* Modal styles */
 .modalOverlay {
   position: fixed;
@@ -183,6 +192,7 @@
   justify-content: center;
   align-items: center;
   z-index: 1000;
+  animation: overlayFadeIn 0.3s ease-out;
 }
 
 .modalContent {
@@ -193,6 +203,30 @@
   max-height: 90vh;
   overflow-y: auto;
   position: relative;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  animation: modalFadeIn 0.4s ease-out;
+}
+
+/* Animation for modal entrance */
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Animation for overlay */
+@keyframes overlayFadeIn {
+  from { 
+    background-color: rgba(0, 0, 0, 0); 
+  }
+  to { 
+    background-color: rgba(0, 0, 0, 0.5); 
+  }
 }
 
 .modalHeader {
@@ -208,6 +242,8 @@
   font-weight: 600;
   color: #2d3748;
   margin: 0;
+  display: flex;
+  align-items: center;
 }
 
 .closeButton {
@@ -216,6 +252,22 @@
   font-size: 24px;
   cursor: pointer;
   color: #718096;
+  transition: color 0.2s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border-radius: 4px;
+}
+
+.closeButton:hover {
+  color: #e53e3e;
+  background-color: #f7fafc;
+}
+
+.closeButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .modalBody {
@@ -240,12 +292,24 @@
   font-size: 16px;
   border: 1px solid #e2e8f0;
   border-radius: 6px;
-  transition: border-color 0.2s ease-in-out;
+  transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 }
 
 .formInput:focus {
   outline: none;
   border-color: #4299e1;
+  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15);
+}
+
+.formInput:disabled {
+  background-color: #f7fafc;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.formInput::placeholder {
+  color: #a0aec0;
+  opacity: 0.8;
 }
 
 .formTextarea {
@@ -320,11 +384,25 @@
   font-weight: 500;
   color: #4a5568;
   cursor: pointer;
-  transition: background-color 0.2s ease-in-out;
+  transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out, transform 0.1s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .cancelButton:hover {
   background-color: #f7fafc;
+  border-color: #cbd5e0;
+}
+
+.cancelButton:active {
+  transform: scale(0.98);
+}
+
+.cancelButton:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
 }
 
 .submitButton {
@@ -336,11 +414,25 @@
   font-weight: 500;
   color: white;
   cursor: pointer;
-  transition: background-color 0.2s ease-in-out;
+  transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .submitButton:hover {
   background-color: #3182ce;
+}
+
+.submitButton:active {
+  transform: scale(0.98);
+}
+
+.submitButton:disabled {
+  background-color: #a0aec0;
+  cursor: not-allowed;
+  opacity: 0.7;
+  transform: none;
 }
 
 .deleteModalContent {
@@ -638,4 +730,97 @@
 
 .backLink:hover {
   background-color: #3367d6;
+}
+
+.modalDescription {
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: #555;
+  margin-bottom: 1.5rem;
+  background-color: #f8f9fa;
+  padding: 12px;
+  border-radius: 6px;
+  border-left: 4px solid #4299e1;
+}
+
+.successMessage {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  border-left: 4px solid #2e7d32;
+  animation: fadeIn 0.5s ease-in-out;
+  position: relative;
+  overflow: hidden;
+}
+
+.successMessage::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.3) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transform: rotate(30deg);
+  animation: shimmer 2s infinite;
+  pointer-events: none;
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%) rotate(30deg);
+  }
+  100% {
+    transform: translateX(100%) rotate(30deg);
+  }
+}
+
+.errorMessage {
+  background-color: #ffebee;
+  color: #c62828;
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  border-left: 4px solid #c62828;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.formHelp {
+  font-size: 0.75rem;
+  color: #718096;
+  margin-top: 0.5rem;
+  font-style: italic;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 } 

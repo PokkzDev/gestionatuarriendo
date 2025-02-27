@@ -1,37 +1,43 @@
 import { NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
 import { getServerSession } from 'next-auth';
-
-const prisma = new PrismaClient();
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import prisma from '@/lib/prisma';
 
 // GET /api/properties - Get all properties for the current user
 export async function GET(request) {
   try {
-    const session = await getServerSession();
+    console.log('API: Properties GET request received');
+    const session = await getServerSession(authOptions);
     
-    if (!session) {
+    console.log('API: Session data:', session ? 'Session exists' : 'No session', session?.user?.email || 'No email');
+    
+    if (!session || !session.user) {
+      console.log('API: No authorized session found');
       return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
     }
     
-    let userId = session.user?.id;
+    // Find user by email from session
+    console.log('API: Looking for user with email:', session.user.email);
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email },
+    });
     
-    if (!userId) {
-      // Fallback to first user for development
-      const firstUser = await prisma.user.findFirst();
-      if (!firstUser) {
-        return NextResponse.json({ error: 'No se encontraron usuarios en la base de datos' }, { status: 404 });
-      }
-      userId = firstUser.id;
+    if (!user) {
+      console.log('API: User not found for email:', session.user.email);
+      return NextResponse.json({ error: 'Usuario no encontrado' }, { status: 404 });
     }
     
+    console.log('API: Found user with ID:', user.id);
     const properties = await prisma.property.findMany({
       where: {
-        userId: userId,
+        userId: user.id,
       },
       orderBy: {
         createdAt: 'desc',
       },
     });
+    
+    console.log(`API: Fetched ${properties.length} properties for user ID ${user.id}`);
     
     return NextResponse.json(properties);
   } catch (error) {
@@ -43,32 +49,23 @@ export async function GET(request) {
 // POST /api/properties - Create a new property
 export async function POST(request) {
   try {
-    const session = await getServerSession();
+    const session = await getServerSession(authOptions);
     
-    if (!session) {
+    if (!session || !session.user) {
       return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
     }
     
-    let userId = session.user?.id;
-    
-    if (!userId) {
-      // Fallback to first user for development
-      const firstUser = await prisma.user.findFirst();
-      if (!firstUser) {
-        return NextResponse.json({ error: 'No se encontraron usuarios en la base de datos' }, { status: 404 });
-      }
-      userId = firstUser.id;
-    }
-    
-    // Get the user to check their account tier
+    // Get user by email which is more reliable than id in the session
     const user = await prisma.user.findUnique({
-      where: { id: userId }
+      where: { email: session.user.email }
     });
     
     if (!user) {
       return NextResponse.json({ error: 'Usuario no encontrado' }, { status: 404 });
     }
-
+    
+    const userId = user.id;
+    
     // Get the property count separately
     const propertyCount = await prisma.property.count({
       where: { userId: userId }
@@ -116,9 +113,11 @@ export async function POST(request) {
         totalArea: data.totalArea ? parseFloat(data.totalArea) : null,
         rentAmount: data.rentAmount ? parseFloat(data.rentAmount) : null,
         status: data.status || 'AVAILABLE',
-        userId: userId,
+        userId: user.id,
       },
     });
+    
+    console.log(`Property created successfully for user ${user.email} (ID: ${user.id})`);
     
     return NextResponse.json(property, { status: 201 });
   } catch (error) {

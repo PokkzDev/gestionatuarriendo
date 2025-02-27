@@ -10,13 +10,16 @@ import {
   FaEdit,
   FaTrash,
   FaHome,
-  FaBed,
-  FaBath,
-  FaRulerCombined,
-  FaMoneyBillWave,
-  FaCar,
   FaExclamationTriangle,
-  FaTimes
+  FaTimes,
+  FaUserPlus,
+  FaInfoCircle,
+  FaCheckCircle,
+  FaExclamationCircle,
+  FaEnvelope,
+  FaInfo,
+  FaSpinner,
+  FaPaperPlane
 } from 'react-icons/fa';
 
 function MisPropiedadesContent() {
@@ -25,7 +28,10 @@ function MisPropiedadesContent() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showTenantModal, setShowTenantModal] = useState(false);
   const [currentProperty, setCurrentProperty] = useState(null);
+  const [tenantEmail, setTenantEmail] = useState('');
+  const [tenantInviteStatus, setTenantInviteStatus] = useState({ loading: false, error: '', success: false });
   const [formData, setFormData] = useState({
     name: '',
     address: '',
@@ -60,16 +66,21 @@ function MisPropiedadesContent() {
   // Function to fetch properties from API
   const fetchProperties = async () => {
     setIsLoading(true);
+    console.log('Fetching properties...');
     try {
+      console.log('Session status:', status);
+      console.log('User session:', session);
       const response = await fetch('/api/properties');
+      console.log('API response status:', response.status);
       if (!response.ok) {
-        throw new Error('Error al obtener propiedades');
+        throw new Error(`Error al obtener propiedades: ${response.status}`);
       }
       const data = await response.json();
+      console.log('Fetched properties data:', data);
       setProperties(data);
       setPropertyCount(data.length);
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Error fetching properties:', error);
       setError('No se pudieron cargar las propiedades. Por favor, intenta nuevamente.');
     } finally {
       setIsLoading(false);
@@ -337,6 +348,90 @@ function MisPropiedadesContent() {
     }
   };
 
+  const handleTenantSubmit = async (e) => {
+    e.preventDefault();
+    
+    console.log('Current property:', currentProperty);
+    console.log('Property ID:', currentProperty?.id);
+    console.log('Tenant email:', tenantEmail);
+    
+    if (!tenantEmail || !currentProperty) {
+      setTenantInviteStatus({
+        loading: false,
+        error: 'Por favor ingresa un email válido',
+        success: false
+      });
+      return;
+    }
+    
+    setTenantInviteStatus({
+      loading: true,
+      error: '',
+      success: false
+    });
+    
+    const requestData = {
+      propertyId: currentProperty.id,
+      tenantEmail: tenantEmail,
+    };
+    
+    console.log('Sending invite request with data:', requestData);
+    
+    try {
+      const response = await fetch('/api/properties/invite', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestData),
+        credentials: 'include',
+      });
+      
+      const data = await response.json();
+      console.log('Invite API response:', data);
+      
+      if (!response.ok) {
+        throw new Error(data.error || 'Error al enviar la invitación');
+      }
+      
+      setTenantInviteStatus({
+        loading: false,
+        error: '',
+        success: true
+      });
+      
+      // Reset form after successful submission
+      setTimeout(() => {
+        setShowTenantModal(false);
+        setTenantEmail('');
+        setTenantInviteStatus({
+          loading: false,
+          error: '',
+          success: false
+        });
+      }, 2000);
+      
+    } catch (err) {
+      console.error('Invite error:', err);
+      setTenantInviteStatus({
+        loading: false,
+        error: err.message || 'Error al enviar la invitación',
+        success: false
+      });
+    }
+  };
+
+  const openTenantModal = (property) => {
+    setCurrentProperty(property);
+    setTenantEmail('');
+    setTenantInviteStatus({
+      loading: false,
+      error: '',
+      success: false
+    });
+    setShowTenantModal(true);
+  };
+
   // Render loading state
   if (status === 'loading' || isLoading) {
     return (
@@ -493,6 +588,13 @@ function MisPropiedadesContent() {
                   </div>
                 </div>
                 <div className={styles.propertyActions}>
+                  <button 
+                    className={`${styles.actionButton} ${styles.tenantButton}`}
+                    onClick={() => openTenantModal(property)}
+                    title="Agregar Arrendatario"
+                  >
+                    <FaUserPlus />
+                  </button>
                   <button 
                     className={`${styles.actionButton} ${styles.editButton}`}
                     onClick={() => openEditModal(property)}
@@ -695,7 +797,7 @@ function MisPropiedadesContent() {
                     
                     {formData.parkingDetails.length === 0 ? (
                       <p className={styles.noDetailsMessage}>
-                        No hay estacionamientos especificados. Haga clic en "Agregar estacionamiento" para añadir uno.
+                        No hay estacionamientos especificados. Haga clic en &quot;Agregar estacionamiento&quot; para añadir uno.
                       </p>
                     ) : (
                       <div className={styles.detailsList}>
@@ -749,7 +851,7 @@ function MisPropiedadesContent() {
                     
                     {formData.storageDetails.length === 0 ? (
                       <p className={styles.noDetailsMessage}>
-                        No hay bodegas especificadas. Haga clic en "Agregar bodega" para añadir una.
+                        No hay bodegas especificadas. Haga clic en &quot;Agregar bodega&quot; para añadir una.
                       </p>
                     ) : (
                       <div className={styles.detailsList}>
@@ -976,7 +1078,7 @@ function MisPropiedadesContent() {
                     
                     {formData.parkingDetails.length === 0 ? (
                       <p className={styles.noDetailsMessage}>
-                        No hay estacionamientos especificados. Haga clic en "Agregar estacionamiento" para añadir uno.
+                        No hay estacionamientos especificados. Haga clic en &quot;Agregar estacionamiento&quot; para añadir uno.
                       </p>
                     ) : (
                       <div className={styles.detailsList}>
@@ -1030,7 +1132,7 @@ function MisPropiedadesContent() {
                     
                     {formData.storageDetails.length === 0 ? (
                       <p className={styles.noDetailsMessage}>
-                        No hay bodegas especificadas. Haga clic en "Agregar bodega" para añadir una.
+                        No hay bodegas especificadas. Haga clic en &quot;Agregar bodega&quot; para añadir una.
                       </p>
                     ) : (
                       <div className={styles.detailsList}>
@@ -1104,7 +1206,7 @@ function MisPropiedadesContent() {
             </div>
             <div className={styles.deleteModalContent}>
               <p className={styles.deleteModalMessage}>
-                ¿Estás seguro que deseas eliminar la propiedad "{currentProperty?.name}"? Esta acción no se puede deshacer.
+                ¿Estás seguro que deseas eliminar la propiedad &quot;{currentProperty?.name}&quot;? Esta acción no se puede deshacer.
               </p>
               <div className={styles.deleteModalButtons}>
                 <button
@@ -1121,6 +1223,107 @@ function MisPropiedadesContent() {
                 </button>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Add Tenant Modal */}
+      {showTenantModal && (
+        <div className={styles.modalOverlay}>
+          <div className={styles.modalContent}>
+            <div className={styles.modalHeader}>
+              <h3 className={styles.modalTitle}>
+                <FaUserPlus style={{ marginRight: '8px' }} /> Agregar Arrendatario
+              </h3>
+              <button 
+                className={styles.closeButton}
+                onClick={() => setShowTenantModal(false)}
+                disabled={tenantInviteStatus.loading}
+                aria-label="Cerrar"
+              >
+                <FaTimes />
+              </button>
+            </div>
+            <form onSubmit={handleTenantSubmit}>
+              <div className={styles.modalBody}>
+                <p className={styles.modalDescription}>
+                  <FaInfoCircle style={{ marginRight: '8px', color: '#4299e1' }} />
+                  Ingresa el correo electrónico del arrendatario para vincularlo a esta propiedad. Esto le permitirá ver los detalles de la propiedad en la plataforma.
+                </p>
+                
+                {tenantInviteStatus.success && (
+                  <div className={styles.successMessage}>
+                    <FaCheckCircle style={{ marginRight: '8px' }} />
+                    ¡Arrendatario vinculado exitosamente!
+                  </div>
+                )}
+                
+                {tenantInviteStatus.error && (
+                  <div className={styles.errorMessage}>
+                    <FaExclamationCircle style={{ marginRight: '8px' }} />
+                    {tenantInviteStatus.error}
+                  </div>
+                )}
+                
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel} htmlFor="tenantEmail">
+                    <FaEnvelope style={{ marginRight: '6px' }} /> 
+                    Correo electrónico <span style={{ color: '#e53e3e' }}>*</span>
+                  </label>
+                  <div style={{ position: 'relative' }}>
+                    <input
+                      type="email"
+                      id="tenantEmail"
+                      name="tenantEmail"
+                      value={tenantEmail}
+                      onChange={(e) => setTenantEmail(e.target.value)}
+                      placeholder="Ej: arrendatario@ejemplo.com"
+                      className={styles.formInput}
+                      required
+                      disabled={tenantInviteStatus.loading || tenantInviteStatus.success}
+                      style={{ paddingLeft: '32px' }}
+                    />
+                    <FaEnvelope style={{ 
+                      position: 'absolute', 
+                      left: '10px', 
+                      top: '50%', 
+                      transform: 'translateY(-50%)',
+                      color: '#718096',
+                      opacity: tenantInviteStatus.loading || tenantInviteStatus.success ? 0.5 : 1
+                    }} />
+                  </div>
+                  <p className={styles.formHelp}>
+                    <FaInfo style={{ marginRight: '4px', fontSize: '10px' }} />
+                    Se enviará una notificación al arrendatario para que pueda acceder a los detalles de la propiedad.
+                  </p>
+                </div>
+              </div>
+              <div className={styles.modalFooter}>
+                <button 
+                  type="button" 
+                  className={styles.cancelButton}
+                  onClick={() => setShowTenantModal(false)}
+                  disabled={tenantInviteStatus.loading}
+                >
+                  <FaTimes style={{ marginRight: '6px' }} /> Cancelar
+                </button>
+                <button 
+                  type="submit" 
+                  className={styles.submitButton}
+                  disabled={tenantInviteStatus.loading || tenantInviteStatus.success}
+                >
+                  {tenantInviteStatus.loading ? (
+                    <>
+                      <FaSpinner style={{ marginRight: '6px', animation: 'spin 1s linear infinite' }} /> Enviando...
+                    </>
+                  ) : (
+                    <>
+                      <FaPaperPlane style={{ marginRight: '6px' }} /> Vincular Arrendatario
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
