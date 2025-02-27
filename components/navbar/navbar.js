@@ -7,7 +7,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useSession, signOut } from 'next-auth/react';
 // Import Font Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSignOutAlt, faUser, faCog } from '@fortawesome/free-solid-svg-icons';
+import { faSignOutAlt, faUser, faCog, faHome, faMoneyBill } from '@fortawesome/free-solid-svg-icons';
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -115,49 +115,14 @@ export default function Navbar() {
           className={`${styles.navLinks} ${isMenuOpen ? styles.show : ''}`}
         >
           <div className={styles.mainLinks}>
-            
             {status === 'authenticated' && (
               <>
-                {(session.user?.role === 'PROPIETARIO' || session.user?.role === 'AMBOS') && (
-                  <MenuLink href="/mis-propiedades">Mis Propiedades</MenuLink>
-                )}
-                
                 {(session.user?.role === 'ARRENDATARIO' || session.user?.role === 'AMBOS') && (
                   <MenuLink href="/mi-arriendo">Mi Arriendo</MenuLink>
                 )}
-                
-                <MenuLink href="/mis-gastos">Mis Gastos</MenuLink>
-                
-                {/* Display user menu items directly in mobile view */}
-                {isMobile && status === 'authenticated' && (
-                  <>
-                    <div className={styles.userInfoMobile}>
-                      <Image
-                        src={session.user?.image || "/default-avatar.png"}
-                        alt="User avatar"
-                        width={40}
-                        height={40}
-                        className={styles.avatarMobile}
-                      />
-                      <div>
-                        <p className={styles.userNameMobile}>{session.user?.name || 'Usuario'}</p>
-                        <p className={styles.userEmailMobile}>{session.user?.email || 'usuario@example.com'}</p>
-                      </div>
-                    </div>
-                    <MenuLink href="/profile" icon={faUser}>Mi Perfil</MenuLink>
-                    <MenuLink href="/mi-cuenta/configuraciones" icon={faCog}>Configuraciones</MenuLink>
-                    <button 
-                      className={styles.logoutButtonMobile}
-                      onClick={handleLogout}
-                    >
-                      <FontAwesomeIcon icon={faSignOutAlt} className={styles.logoutIcon} />
-                      Cerrar Sesión
-                    </button>
-                  </>
-                )}
               </>
             )}
-            
+            <MenuLink href="/planes">Planes</MenuLink>
           </div>
           
           <div className={styles.userLinks}>
@@ -166,8 +131,8 @@ export default function Navbar() {
                 Iniciar Sesión
               </MenuLink>
             ) : (
-              // Only show dropdown user menu in desktop view
               !isMobile && (
+                // Desktop user menu
                 <div className={styles.userMenuContainer}>
                   <button 
                     ref={userButtonRef}
@@ -194,6 +159,10 @@ export default function Navbar() {
                       </div>
                       <div className={styles.userMenuLinks}>
                         <MenuLink href="/profile" icon={faUser}>Mi Perfil</MenuLink>
+                        {(session.user?.role === 'PROPIETARIO' || session.user?.role === 'AMBOS') && (
+                          <MenuLink href="/mis-propiedades" icon={faHome}>Mis Propiedades</MenuLink>
+                        )}
+                        <MenuLink href="/mis-gastos" icon={faMoneyBill}>Mis Gastos</MenuLink>
                         <MenuLink href="/mi-cuenta/configuraciones" icon={faCog}>Configuraciones</MenuLink>
                         <button 
                           className={styles.logoutButton}

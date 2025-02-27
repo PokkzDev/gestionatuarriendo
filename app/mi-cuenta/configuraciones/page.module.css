@@ -658,4 +658,9 @@ input:checked + .slider:before {
 
 .successIcon {
   color: #52c41a;
+}
+
+.disabledButton {
+  opacity: 0.5;
+  pointer-events: none;
 } 

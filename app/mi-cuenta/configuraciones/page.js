@@ -207,18 +207,22 @@ export default function MiCuentaPreferencias() {
         id="settings-sidebar"
         className={`${styles.sidebar} ${showSidebar ? styles.sidebarShow : ''}`}
       >
-        <h1 className={styles.title}>Preferencias</h1>
+        <h1 className={styles.title}>Configuraciones</h1>
         <div className={styles.settingsCategoryList}>
-          {settingCategories.map((category) => (
-            <button
-              key={category.id}
-              className={`${styles.settingsCategoryButton} ${activeSettingCategory === category.id ? styles.active : ''}`}
-              onClick={() => handleCategorySelect(category.id)}
-            >
-              {category.icon}
-              <span className={styles.settingsLabel}>{category.label}</span>
-            </button>
-          ))}
+          {settingCategories.map((category) => {
+            const isDisabled = ['notifications', 'appearance', 'account'].includes(category.id);
+            return (
+              <button
+                key={category.id}
+                className={`${styles.settingsCategoryButton} ${activeSettingCategory === category.id ? styles.active : ''} ${isDisabled ? styles.disabledButton : ''}`}
+                onClick={() => !isDisabled && handleCategorySelect(category.id)}
+                disabled={isDisabled}
+              >
+                {category.icon}
+                <span className={styles.settingsLabel}>{category.label}</span>
+              </button>
+            );
+          })}
         </div>
       </div>
       

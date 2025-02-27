@@ -52,6 +52,8 @@ model User {
   role Role @default(ARRENDATARIO)
   nameChangesCount Int @default(0)
   accountTier AccountTier @default(FREE)
+  subscriptionId String?
+  subscriptionStatus String?
   
   accounts Account[]
   sessions Session[]
