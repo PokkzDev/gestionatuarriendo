@@ -194,16 +194,74 @@
 }
 
 .error {
-  color: var(--error, #ef4444);
-  font-size: 0.875rem;
-  text-align: left;
-  background-color: var(--error-light, #fee2e2);
-  padding: 0.75rem;
-  border-radius: 0.5rem;
-  border: 1px solid var(--error-border, #fca5a5);
-  margin-bottom: 1rem;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
+  background-color: #fde8e8;
+  color: #e53e3e;
+  border-radius: 0.375rem;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  flex-direction: column;
+}
+
+.error svg {
+  margin-right: 0.5rem;
+  flex-shrink: 0;
+  float: left;
+}
+
+.resendButton {
+  display: inline-block;
+  background-color: transparent;
+  color: #3182ce;
+  border: none;
+  margin-top: 0.75rem;
+  font-size: 0.875rem;
+  padding: 0.25rem 0;
+  cursor: pointer;
+  text-decoration: underline;
+  transition: color 0.2s;
+}
+
+.resendButton:hover {
+  color: #2c5282;
+}
+
+.resendButton:disabled {
+  color: #a0aec0;
+  cursor: not-allowed;
+}
+
+.success {
+  display: flex;
+  align-items: flex-start;
+  background-color: #e6f7eb;
+  color: #22863a;
+  border-radius: 0.375rem;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  flex-direction: column;
+}
+
+.success svg {
+  margin-right: 0.5rem;
+  flex-shrink: 0;
+}
+
+.emailPreview {
+  margin-top: 0.75rem;
+  font-size: 0.8rem;
+  width: 100%;
+  text-align: center;
+}
+
+.emailPreview a {
+  color: #4285f4;
+  text-decoration: underline;
 }
 
 .button {

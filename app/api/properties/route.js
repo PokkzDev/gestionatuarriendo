@@ -62,18 +62,19 @@ export async function POST(request) {
     
     // Get the user to check their account tier
     const user = await prisma.user.findUnique({
-      where: { id: userId },
-      include: {
-        properties: true
-      }
+      where: { id: userId }
     });
     
     if (!user) {
       return NextResponse.json({ error: 'Usuario no encontrado' }, { status: 404 });
     }
+
+    // Get the property count separately
+    const propertyCount = await prisma.property.count({
+      where: { userId: userId }
+    });
     
     // Check property limits based on account tier
-    const propertyCount = user.properties.length;
     let propertyLimit = 1; // Default for FREE
     
     if (user.accountTier === 'PREMIUM') {

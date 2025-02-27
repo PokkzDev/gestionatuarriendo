@@ -1,0 +1,100 @@
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 2rem;
+  background-color: #f8f9fa;
+}
+
+.card {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 500px;
+  padding: 2rem;
+  text-align: center;
+}
+
+.title {
+  font-size: 1.75rem;
+  color: #333;
+  margin-bottom: 2rem;
+}
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 0;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 5px solid #4285f4;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1.5rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.success, .error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.successIcon, .errorIcon {
+  margin-bottom: 1.5rem;
+}
+
+.successMessage, .errorMessage {
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+  line-height: 1.5;
+  color: #333;
+}
+
+.actions {
+  margin-top: 1rem;
+}
+
+.button {
+  display: inline-block;
+  background-color: #4285f4;
+  color: white;
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
+  text-decoration: none;
+  transition: background-color 0.2s;
+}
+
+.button:hover {
+  background-color: #3367d6;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .card {
+    padding: 1.5rem;
+  }
+  
+  .title {
+    font-size: 1.5rem;
+  }
+  
+  .successMessage, .errorMessage {
+    font-size: 1rem;
+  }
+} 

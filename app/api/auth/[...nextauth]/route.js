@@ -32,12 +32,18 @@ export const authOptions = {
           throw new Error('Contraseña incorrecta');
         }
 
+        // Check if email is verified
+        if (!user.emailVerified) {
+          throw new Error('Correo electrónico no verificado. Por favor, verifica tu correo para continuar.');
+        }
+
         return {
           id: user.id,
           email: user.email,
           name: user.name,
           role: user.role,
           accountTier: user.accountTier,
+          emailVerified: user.emailVerified,
         };
       }
     })
@@ -48,6 +54,7 @@ export const authOptions = {
         token.role = user.role;
         token.id = user.id;
         token.accountTier = user.accountTier;
+        token.emailVerified = user.emailVerified;
       }
       return token;
     },
@@ -58,6 +65,7 @@ export const authOptions = {
         session.user.name = token.name;
         session.user.email = token.email;
         session.user.accountTier = token.accountTier;
+        session.user.emailVerified = token.emailVerified;
       }
       return session;
     }
