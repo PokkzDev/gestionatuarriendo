@@ -68,16 +68,35 @@ export default function Planes() {
   const handleUpgrade = async (planId) => {
     if (planId === userTier) return;
 
-    // In a real application, this would redirect to a payment page
-    // or process the subscription change
     setSelectedPlan(planId);
     setLoading(true);
 
-    // Simulating API call delay
-    setTimeout(() => {
-      alert(`En una aplicación real, aquí te redirigirían a la pasarela de pago para activar el plan ${planId}.`);
+    try {
+      const response = await fetch('/api/mercadopago/subscriptions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          planId,
+          userId: session?.user?.id,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Error al procesar la suscripción');
+      }
+
+      // Redirect to MercadoPago checkout
+      window.location.href = data.init_point;
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Hubo un error al procesar tu solicitud. Por favor intenta nuevamente.');
+    } finally {
       setLoading(false);
-    }, 1500);
+    }
   };
 
   return (
