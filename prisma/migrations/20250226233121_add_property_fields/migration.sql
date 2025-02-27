@@ -1,0 +1,5 @@
+-- AlterTable
+ALTER TABLE `Property` ADD COLUMN `floor` INTEGER NULL,
+    ADD COLUMN `furnished` BOOLEAN NOT NULL DEFAULT false,
+    ADD COLUMN `hasStorage` BOOLEAN NOT NULL DEFAULT false,
+    ADD COLUMN `parkingSpots` INTEGER NOT NULL DEFAULT 0;

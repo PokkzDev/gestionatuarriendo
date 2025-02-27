@@ -98,11 +98,13 @@ export default function Navbar() {
           <div className={styles.mainLinks}>
             
             {status === 'authenticated' && (
-              <MenuLink href="/mis-gastos">Mis Gastos</MenuLink>
+              <>
+                <MenuLink href="/mis-propiedades">Mis Propiedades</MenuLink>
+                <MenuLink href="/mis-gastos">Mis Gastos</MenuLink>
+                
+              </>
             )}
-            {/* <MenuLink href="/properties">Propiedades</MenuLink>
-            <MenuLink href="/tenants">Arrendatarios</MenuLink>
-            <MenuLink href="/payments">Pagos</MenuLink> */}
+            
           </div>
           
           <div className={styles.userLinks}>

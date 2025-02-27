@@ -63,9 +63,9 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
     
-    // TEMPORARY: For testing purposes - get the first user
-    // In production, you should use proper authentication
+    // Get the user's ID and account tier from the session
     let userId = session.user?.id;
+    const accountTier = session.user?.accountTier || 'FREE';
     
     if (!userId) {
       // Fallback to first user for development
@@ -77,6 +77,24 @@ export async function POST(request) {
     }
     
     const data = await request.json();
+    
+    // Check if the user has reached their limit for this expense type
+    if (accountTier === 'FREE') {
+      const expenseCount = await prisma.expense.count({
+        where: {
+          userId: userId,
+          type: data.type
+        }
+      });
+      
+      // Free accounts are limited to 12 expenses per type
+      if (expenseCount >= 12) {
+        return NextResponse.json(
+          { error: 'Has alcanzado el límite de gastos para este tipo en tu plan actual. Actualiza a Premium o Elite para registrar gastos ilimitados.' }, 
+          { status: 403 }
+        );
+      }
+    }
     
     const expense = await prisma.expense.create({
       data: {

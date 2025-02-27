@@ -37,6 +37,7 @@ export const authOptions = {
           email: user.email,
           name: user.name,
           role: user.role,
+          accountTier: user.accountTier,
         };
       }
     })
@@ -46,6 +47,7 @@ export const authOptions = {
       if (user) {
         token.role = user.role;
         token.id = user.id;
+        token.accountTier = user.accountTier;
       }
       return token;
     },
@@ -55,6 +57,7 @@ export const authOptions = {
         session.user.id = token.id;
         session.user.name = token.name;
         session.user.email = token.email;
+        session.user.accountTier = token.accountTier;
       }
       return session;
     }

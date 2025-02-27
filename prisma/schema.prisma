@@ -51,10 +51,12 @@ model User {
   image String?
   role Role @default(ARRENDATARIO)
   nameChangesCount Int @default(0)
+  accountTier AccountTier @default(FREE)
   
   accounts Account[]
   sessions Session[]
   expenses Expense[]
+  properties Property[]
   
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -64,6 +66,12 @@ enum Role {
   ARRENDATARIO
   PROPIETARIO
   AMBOS
+}
+
+enum AccountTier {
+  FREE
+  PREMIUM
+  ELITE
 }
 
 model Expense {
@@ -84,6 +92,47 @@ enum ExpenseType {
   RENT
   MAINTENANCE
   OTHER
+}
+
+model Property {
+  id String @id @default(uuid()) @db.VarChar(36)
+  name String
+  address String
+  description String?
+  propertyType PropertyType @default(APARTMENT)
+  bedrooms Int @default(1)
+  bathrooms Int @default(1)
+  hasParking Boolean @default(false)
+  parkingSpots Int @default(0)
+  parkingDetails Json?
+  hasStorage Boolean @default(false)
+  storageUnits Int @default(0)
+  storageDetails Json?
+  furnished Boolean @default(false)
+  totalArea Float?
+  rentAmount Float?
+  status PropertyStatus @default(AVAILABLE)
+  userId String @db.VarChar(36)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum PropertyType {
+  APARTMENT
+  HOUSE
+  CONDO
+  OFFICE
+  COMMERCIAL
+  LAND
+  OTHER
+}
+
+enum PropertyStatus {
+  AVAILABLE
+  OCCUPIED
+  UNDER_MAINTENANCE
 }
 
 

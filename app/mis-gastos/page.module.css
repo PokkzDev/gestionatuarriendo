@@ -652,11 +652,11 @@
 }
 
 .loadingSpinner {
+  width: 40px;
+  height: 40px;
   border: 4px solid rgba(0, 0, 0, 0.1);
-  border-left-color: #1890ff;
   border-radius: 50%;
-  width: 36px;
-  height: 36px;
+  border-left-color: #09f;
   animation: spin 1s linear infinite;
 }
 
@@ -670,4 +670,197 @@
   .expenseItem {
     padding-bottom: 40px;
   }
+}
+
+/* Stats Cards Styles */
+.statsCardsContainer {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.statCard {
+  background-color: white;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+}
+
+.statCardTitle {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 4px;
+}
+
+.statCardValue {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 4px;
+}
+
+.statCardTrend {
+  display: flex;
+  align-items: center;
+  font-size: 0.85rem;
+}
+
+.statCardTrendUp {
+  color: #f5222d;
+}
+
+.statCardTrendDown {
+  color: #52c41a;
+}
+
+.statCardTrendNeutral {
+  color: #1890ff;
+}
+
+/* Responsive styles for stat cards */
+@media (max-width: 992px) {
+  .statsCardsContainer {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 576px) {
+  .statsCardsContainer {
+    grid-template-columns: 1fr;
+  }
+}
+
+.expenseContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.expenseHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.expenseTitle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Expense limit styles */
+.limitContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 20px;
+  border: 1px solid #eaeaea;
+}
+
+.counterContainer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.counterLabel {
+  font-weight: 500;
+  color: #555;
+}
+
+.counterValue {
+  font-weight: 600;
+  color: #1890ff;
+}
+
+.counterLimitReached {
+  font-weight: 600;
+  color: #f5222d;
+}
+
+.upgradePrompt {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  background-color: #fff7e6;
+  border: 1px solid #ffebb3;
+  border-radius: 6px;
+  color: #d4b106;
+}
+
+.upgradeButton {
+  margin-left: auto;
+  padding: 6px 12px;
+  background-color: #f5222d;
+  color: white;
+  border-radius: 4px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background-color 0.2s;
+}
+
+.upgradeButton:hover {
+  background-color: #ff4d4f;
+}
+
+/* Responsive styles for the limit container */
+@media (max-width: 768px) {
+  .limitContainer {
+    padding: 12px;
+  }
+  
+  .upgradePrompt {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .upgradeButton {
+    margin-left: 0;
+    align-self: stretch;
+    text-align: center;
+  }
+}
+
+.addButtonContainer {
+  position: relative;
+  margin-bottom: 16px;
+}
+
+.disabledButton {
+  cursor: not-allowed !important;
+  box-shadow: none !important;
+}
+
+.disabledButton:hover {
+  background-color: #1890ff !important;
+  transform: none !important;
+}
+
+.limitReachedMessage {
+  margin-top: 8px;
+  font-size: 0.9rem;
+  color: #ff4d4f;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.upgradeLink {
+  color: #1890ff;
+  text-decoration: underline;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.upgradeLink:hover {
+  color: #40a9ff;
 }
