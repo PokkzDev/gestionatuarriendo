@@ -1,11 +1,11 @@
-import mercadopago from 'mercadopago';
+import { MercadoPagoConfig, PreApproval } from 'mercadopago';
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import prisma  from '@/lib/prisma';
 import crypto from 'crypto';
 
-mercadopago.configure({
-  access_token: process.env.MP_ACCESS_TOKEN
-});
+// Initialize MercadoPago client with SDK v2.x pattern
+const client = new MercadoPagoConfig({ accessToken: process.env.MP_ACCESS_TOKEN });
+const preapprovalClient = new PreApproval(client);
 
 export async function POST(request) {
   try {
@@ -54,9 +54,10 @@ export async function POST(request) {
     
     if (body.type === 'subscription_preapproval') {
       const preapprovalId = body.data.id;
-      const subscription = await mercadopago.preapproval.findById(preapprovalId);
+      // Use the new SDK pattern to find the subscription
+      const subscription = await preapprovalClient.get({ id: preapprovalId });
       
-      const { external_reference, status } = subscription.response;
+      const { external_reference, status } = subscription;
       const [userId, planId] = external_reference.split('-');
 
       // Update user's subscription status in your database

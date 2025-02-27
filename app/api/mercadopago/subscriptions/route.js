@@ -1,10 +1,9 @@
-import mercadopago from 'mercadopago';
+import { MercadoPagoConfig, PreApproval } from 'mercadopago';
 import { NextResponse } from 'next/server';
 
-// Initialize MercadoPago configuration
-mercadopago.configure({
-  access_token: process.env.MP_ACCESS_TOKEN
-});
+// Initialize MercadoPago client with SDK v2.x pattern
+const client = new MercadoPagoConfig({ accessToken: process.env.MP_ACCESS_TOKEN });
+const preapprovalClient = new PreApproval(client);
 
 const PLAN_CONFIGS = {
   PREMIUM: {
@@ -51,11 +50,11 @@ export async function POST(request) {
       notification_url: `${process.env.NEXT_PUBLIC_BASE_URL}/api/mercadopago/webhook`
     };
 
-    const subscription = await mercadopago.preapproval.create(preference);
+    const subscription = await preapprovalClient.create(preference);
     
     return NextResponse.json({
-      init_point: subscription.response.init_point,
-      preapproval_id: subscription.response.id
+      init_point: subscription.init_point,
+      preapproval_id: subscription.id
     });
   } catch (error) {
     console.error('Error creating subscription:', error);
