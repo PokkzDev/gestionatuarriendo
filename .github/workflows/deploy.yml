@@ -44,10 +44,10 @@ jobs:
         DATABASE_URL=${{ secrets.DATABASE_URL }}
         NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}
         NEXT_PUBLIC_APP_URL=${{ secrets.NEXT_PUBLIC_APP_URL }}
-        EMAIL_HOST=${{ secrets.EMAIL_SERVER }}
+        EMAIL_SERVER=${{ secrets.EMAIL_SERVER }}
         EMAIL_PORT=${{ secrets.EMAIL_PORT }}
         EMAIL_USER=${{ secrets.EMAIL_USER }}
-        EMAIL_PASS=${{ secrets.EMAIL_PASSWORD }}
+        EMAIL_PASSWORD=${{ secrets.EMAIL_PASSWORD }}
         NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }}
         EOF
 
