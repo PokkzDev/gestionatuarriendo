@@ -49,6 +49,7 @@ jobs:
         EMAIL_USER=${{ secrets.EMAIL_USER }}
         EMAIL_PASSWORD=${{ secrets.EMAIL_PASSWORD }}
         NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }}
+        EMAIL_FROM=${{ secrets.EMAIL_FROM }}
         EOF
 
     - name: Sync files to VPS
