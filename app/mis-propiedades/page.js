@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import styles from './page.module.css';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
+import RoleGuard from '@/components/RoleGuard';
 import {
   FaPlus,
   FaEdit,
@@ -18,7 +19,7 @@ import {
   FaTimes
 } from 'react-icons/fa';
 
-export default function MisPropiedades() {
+function MisPropiedadesContent() {
   const [properties, setProperties] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
@@ -1124,5 +1125,24 @@ export default function MisPropiedades() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function MisPropiedades() {
+  return (
+    <RoleGuard 
+      allowedRoles={['PROPIETARIO', 'AMBOS']} 
+      fallback={
+        <div className={styles.unauthorized}>
+          <h1>Acceso no autorizado</h1>
+          <p>No tienes permiso para ver esta página.</p>
+          <Link href="/" className={styles.backLink}>
+            Volver al inicio
+          </Link>
+        </div>
+      }
+    >
+      <MisPropiedadesContent />
+    </RoleGuard>
   );
 } 

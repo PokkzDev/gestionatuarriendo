@@ -99,7 +99,10 @@ export default function Navbar() {
             
             {status === 'authenticated' && (
               <>
-                <MenuLink href="/mis-propiedades">Mis Propiedades</MenuLink>
+                {(session.user?.role === 'PROPIETARIO' || session.user?.role === 'AMBOS') && (
+                  <MenuLink href="/mis-propiedades">Mis Propiedades</MenuLink>
+                )}
+                
                 <MenuLink href="/mis-gastos">Mis Gastos</MenuLink>
                 
               </>

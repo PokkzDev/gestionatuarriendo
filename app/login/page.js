@@ -161,7 +161,7 @@ function LoginForm() {
         setLoading(false);
       } else {
         // Redirect manually
-        window.location.href = '/dashboard';
+        window.location.href = '/';
       }
     } catch (error) {
       setError('Ha ocurrido un error. Por favor intente más tarde.');

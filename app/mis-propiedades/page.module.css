@@ -601,4 +601,41 @@
     width: 95%;
     max-width: none;
   }
+}
+
+.unauthorized {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 80vh;
+  text-align: center;
+  padding: 2rem;
+}
+
+.unauthorized h1 {
+  font-size: 1.75rem;
+  margin-bottom: 1rem;
+  color: #e53e3e;
+}
+
+.unauthorized p {
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+  color: #4a5568;
+}
+
+.backLink {
+  display: inline-block;
+  background-color: #4285f4;
+  color: white;
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
+  text-decoration: none;
+  transition: background-color 0.2s;
+}
+
+.backLink:hover {
+  background-color: #3367d6;
 } 

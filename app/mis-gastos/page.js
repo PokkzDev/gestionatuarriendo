@@ -44,6 +44,7 @@ import {
 } from 'chart.js';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
+import RoleGuard from '@/components/RoleGuard';
 
 // Register ChartJS components
 ChartJS.register(
@@ -1219,7 +1220,7 @@ const OtherExpenses = () => (
   />
 );
 
-export default function MisGastos() {
+function MisGastosContent() {
   const [activeExpenseType, setActiveExpenseType] = useState('GAS');
   const [showSidebar, setShowSidebar] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -1366,5 +1367,24 @@ export default function MisGastos() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function MisGastos() {
+  return (
+    <RoleGuard 
+      allowedRoles={['PROPIETARIO', 'ARRENDATARIO', 'AMBOS']} 
+      fallback={
+        <div className={styles.unauthorized}>
+          <h1>Acceso no autorizado</h1>
+          <p>Debes iniciar sesión para ver esta página.</p>
+          <Link href="/login" className={styles.backLink}>
+            Iniciar sesión
+          </Link>
+        </div>
+      }
+    >
+      <MisGastosContent />
+    </RoleGuard>
   );
 }
