@@ -866,14 +866,6 @@ const ExpenseComponent = ({ type, title, icon, chartColor }) => {
           {icon}
           <h2>{title}</h2>
         </div>
-        <button 
-          className={styles.addButton}
-          onClick={() => setShowForm(!showForm)}
-          disabled={expenses.length >= expenseLimit && isFreeTier}
-        >
-          <FaPlus />
-          <span>Agregar</span>
-        </button>
       </div>
       
       {loading && <p className={styles.loadingMessage}>Cargando...</p>}
@@ -885,271 +877,255 @@ const ExpenseComponent = ({ type, title, icon, chartColor }) => {
             <>
               <ExpenseStats expenses={expenses} title={title} chartColor={chartColor} />
               
+              {/* Chart section */}
+              <div className={styles.chartContainer}>
+                <Line data={chartData} options={chartOptions} />
+              </div>
+              
               {/* Add the limit counter and warning */}
               {renderLimitWarning()}
-              
-              {/* Chart and expense list sections remain unchanged */}
-              <div className={styles.chartContainer}>
-                {loading ? (
-                  <div className={styles.loadingContainer}>
-                    <div className={styles.loadingSpinner}></div>
-                  </div>
-                ) : error ? (
-                  <p className={styles.errorText}>Error al cargar datos: {error}</p>
-                ) : expenses.length > 0 ? (
-                  <Line data={chartData} options={chartOptions} />
-                ) : (
-                  <p>No hay gastos de {title.toLowerCase()} registrados. Agrega tu primer gasto debajo.</p>
-                )}
-              </div>
-              
-              {/* Add Expense Button/Form */}
-              <div className={styles.addExpenseSection}>
-                {!showForm ? (
-                  <div className={styles.addButtonContainer}>
-                    <button 
-                      className={`${styles.addButton} ${expenses.length >= expenseLimit && isFreeTier ? styles.disabledButton : ''}`}
-                      onClick={() => setShowForm(true)}
-                      style={{ 
-                        backgroundColor: `rgba(${chartColor}, 1)`,
-                        opacity: expenses.length >= expenseLimit && isFreeTier ? 0.5 : 1
-                      }}
-                      disabled={expenses.length >= expenseLimit && isFreeTier}
-                      title={expenses.length >= expenseLimit && isFreeTier ? `Has alcanzado el límite de ${expenseLimit} gastos para este tipo` : "Agregar nuevo gasto"}
-                    >
-                      <FaPlus /> Agregar Gasto de {title}
-                    </button>
-                    {expenses.length >= expenseLimit && isFreeTier && (
-                      <div className={styles.limitReachedMessage}>
-                        Límite alcanzado. <Link href="/planes" className={styles.upgradeLink}>Actualizar plan</Link>
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  <form onSubmit={handleSubmit} className={styles.expenseForm}>
-                    <h3>Agregar Nuevo Gasto de {title}</h3>
-                    
-                    <div className={styles.formGroup}>
-                      <label htmlFor="amount">Monto ($)</label>
-                      <input
-                        type="number"
-                        id="amount"
-                        name="amount"
-                        value={newExpense.amount}
-                        onChange={handleInputChange}
-                        required
-                        min="0"
-                        step="0.01"
-                        className={styles.formInput}
-                        disabled={submitting}
-                      />
-                    </div>
-                    
-                    <div className={styles.formGroup}>
-                      <label htmlFor="description">Descripción</label>
-                      <input
-                        type="text"
-                        id="description"
-                        name="description"
-                        value={newExpense.description}
-                        onChange={handleInputChange}
-                        required
-                        className={styles.formInput}
-                        disabled={submitting}
-                      />
-                    </div>
-                    
-                    <div className={styles.formGroup}>
-                      <label htmlFor="date">Fecha</label>
-                      <input
-                        type="date"
-                        id="date"
-                        name="date"
-                        value={newExpense.date}
-                        onChange={handleInputChange}
-                        required
-                        className={styles.formInput}
-                        disabled={submitting}
-                      />
-                    </div>
-                    
-                    <div className={styles.formActions}>
-                      <button 
-                        type="submit" 
-                        className={styles.submitButton}
-                        style={{ backgroundColor: `rgba(${chartColor}, 0.8)` }}
-                        disabled={submitting}
-                      >
-                        {submitting ? (
-                          <div className={styles.loadingContainer} style={{ justifyContent: 'center', minHeight: 'auto' }}>
-                            <div className={styles.loadingSpinner} style={{ width: '20px', height: '20px', borderWidth: '2px' }}></div>
-                          </div>
-                        ) : (
-                          'Guardar'
-                        )}
-                      </button>
-                      <button 
-                        type="button" 
-                        className={styles.cancelButton}
-                        onClick={() => setShowForm(false)}
-                        disabled={submitting}
-                      >
-                        Cancelar
-                      </button>
-                    </div>
-                  </form>
-                )}
-              </div>
-              
-              {/* Expenses List */}
-              <div className={styles.expensesList}>
-                <h3>Gastos Recientes de {title}</h3>
-                
-                {loading ? (
-                  <div className={styles.loadingContainer}>
-                    <div className={styles.loadingSpinner}></div>
-                  </div>
-                ) : error ? (
-                  <p className={styles.errorText}>Error: {error}</p>
-                ) : expenses.length > 0 ? (
-                  <div className={styles.expensesTable}>
-                    <div className={styles.expenseHeader}>
-                      <span>Fecha</span>
-                      <span>Descripción</span>
-                      <span>Monto</span>
-                      <span>Acciones</span>
-                    </div>
-                    {expenses.map(expense => (
-                      <div key={expense.id} className={styles.expenseItem}>
-                        {editingExpense && editingExpense.id === expense.id ? (
-                          // Editing mode
-                          <>
-                            <span>
-                              <input
-                                type="date"
-                                name="date"
-                                value={editingExpense.date}
-                                onChange={handleEditInputChange}
-                                className={styles.editInput}
-                                required
-                                disabled={submitting}
-                              />
-                            </span>
-                            <span>
-                              <input
-                                type="text"
-                                name="description"
-                                value={editingExpense.description}
-                                onChange={handleEditInputChange}
-                                className={styles.editInput}
-                                required
-                                disabled={submitting}
-                              />
-                            </span>
-                            <span>
-                              <input
-                                type="number"
-                                name="amount"
-                                value={editingExpense.amount}
-                                onChange={handleEditInputChange}
-                                className={styles.editInput}
-                                min="0"
-                                step="0.01"
-                                required
-                                disabled={submitting}
-                              />
-                            </span>
-                            <span className={styles.expenseActions}>
-                              {submitting ? (
-                                <div className={styles.loadingSpinner} style={{ width: '20px', height: '20px', borderWidth: '2px', margin: '0 auto' }}></div>
-                              ) : (
-                                <>
-                                  <button 
-                                    className={`${styles.actionButton} ${styles.saveButton}`}
-                                    onClick={saveEditedExpense}
-                                    title="Guardar cambios"
-                                    disabled={submitting}
-                                  >
-                                    <FaSave />
-                                  </button>
-                                  <button 
-                                    className={`${styles.actionButton} ${styles.cancelButton}`}
-                                    onClick={cancelEditing}
-                                    title="Cancelar edición"
-                                    disabled={submitting}
-                                  >
-                                    <FaTimes />
-                                  </button>
-                                </>
-                              )}
-                            </span>
-                          </>
-                        ) : showDeleteConfirmation === expense.id ? (
-                          // Delete confirmation mode
-                          <>
-                            <span colSpan="3" className={styles.deleteConfirmation}>
-                              ¿Estás seguro que deseas eliminar este gasto?
-                            </span>
-                            <span className={styles.expenseActions}>
-                              {submitting ? (
-                                <div className={styles.loadingSpinner} style={{ width: '20px', height: '20px', borderWidth: '2px', margin: '0 auto' }}></div>
-                              ) : (
-                                <>
-                                  <button 
-                                    className={`${styles.actionButton} ${styles.confirmButton}`}
-                                    onClick={() => deleteExpense(expense.id)}
-                                    title="Confirmar eliminación"
-                                    disabled={submitting}
-                                  >
-                                    <FaCheck />
-                                  </button>
-                                  <button 
-                                    className={`${styles.actionButton} ${styles.cancelButton}`}
-                                    onClick={cancelDelete}
-                                    title="Cancelar eliminación"
-                                    disabled={submitting}
-                                  >
-                                    <FaTimes />
-                                  </button>
-                                </>
-                              )}
-                            </span>
-                          </>
-                        ) : (
-                          // Normal display mode
-                          <>
-                            <span>{formatDateDDMMYYYY(expense.date)}</span>
-                            <span>{expense.description}</span>
-                            <span>${expense.amount.toFixed(2)}</span>
-                            <span className={styles.expenseActions}>
-                              <button 
-                                className={styles.actionButton} 
-                                onClick={() => startEditing(expense)}
-                                title="Editar"
-                              >
-                                <FaEdit />
-                              </button>
-                              <button 
-                                className={styles.actionButton} 
-                                onClick={() => confirmDelete(expense.id)}
-                                title="Eliminar"
-                              >
-                                <FaTrash />
-                              </button>
-                            </span>
-                          </>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p>No hay gastos registrados aún.</p>
-                )}
-              </div>
             </>
           ) : (
-            <p>No hay gastos registrados aún.</p>
+            <div className={styles.noExpensesContainer}>
+              <p className={styles.noExpensesMessage}>No hay gastos de {title.toLowerCase()} registrados.</p>
+              <button 
+                className={`${styles.addButton} ${styles.primaryAddButton}`}
+                onClick={() => setShowForm(true)}
+                disabled={expenses.length >= expenseLimit && isFreeTier}
+              >
+                <FaPlus />
+                <span>Agregar Primer Gasto</span>
+              </button>
+            </div>
           )}
+
+          {/* Add Expense Form */}
+          {showForm && (
+            <form onSubmit={handleSubmit} className={styles.expenseForm}>
+              <h3>Agregar Nuevo Gasto de {title}</h3>
+              
+              <div className={styles.formGroup}>
+                <label htmlFor="amount">Monto ($)</label>
+                <input
+                  type="number"
+                  id="amount"
+                  name="amount"
+                  value={newExpense.amount}
+                  onChange={handleInputChange}
+                  required
+                  min="0"
+                  step="0.01"
+                  className={styles.formInput}
+                  disabled={submitting}
+                />
+              </div>
+              
+              <div className={styles.formGroup}>
+                <label htmlFor="description">Descripción</label>
+                <input
+                  type="text"
+                  id="description"
+                  name="description"
+                  value={newExpense.description}
+                  onChange={handleInputChange}
+                  required
+                  className={styles.formInput}
+                  disabled={submitting}
+                />
+              </div>
+              
+              <div className={styles.formGroup}>
+                <label htmlFor="date">Fecha</label>
+                <input
+                  type="date"
+                  id="date"
+                  name="date"
+                  value={newExpense.date}
+                  onChange={handleInputChange}
+                  required
+                  className={styles.formInput}
+                  disabled={submitting}
+                />
+              </div>
+              
+              <div className={styles.formActions}>
+                <button 
+                  type="submit" 
+                  className={styles.submitButton}
+                  style={{ backgroundColor: `rgba(${chartColor}, 0.8)` }}
+                  disabled={submitting}
+                >
+                  {submitting ? (
+                    <div className={styles.loadingContainer} style={{ justifyContent: 'center', minHeight: 'auto' }}>
+                      <div className={styles.loadingSpinner} style={{ width: '20px', height: '20px', borderWidth: '2px' }}></div>
+                    </div>
+                  ) : (
+                    'Guardar'
+                  )}
+                </button>
+                <button 
+                  type="button" 
+                  className={styles.cancelButton}
+                  onClick={() => setShowForm(false)}
+                  disabled={submitting}
+                >
+                  Cancelar
+                </button>
+              </div>
+            </form>
+          )}
+              
+          {/* Expenses List */}
+          <div className={styles.expensesList}>
+            <div className={styles.expensesListHeader}>
+              <h3>Gastos Recientes de {title}</h3>
+              {expenses.length > 0 && (
+                <button 
+                  className={`${styles.addButton} ${styles.secondaryAddButton}`}
+                  onClick={() => setShowForm(true)}
+                  disabled={expenses.length >= expenseLimit && isFreeTier}
+                >
+                  <FaPlus />
+                  <span>Agregar Gasto</span>
+                </button>
+              )}
+            </div>
+            
+            {expenses.length > 0 ? (
+              <div className={styles.expensesTable}>
+                <div className={styles.expenseHeader}>
+                  <span>Fecha</span>
+                  <span>Descripción</span>
+                  <span>Monto</span>
+                  <span>Acciones</span>
+                </div>
+                {expenses.map(expense => (
+                  <div key={expense.id} className={styles.expenseItem}>
+                    {editingExpense && editingExpense.id === expense.id ? (
+                      // Editing mode
+                      <>
+                        <span>
+                          <input
+                            type="date"
+                            name="date"
+                            value={editingExpense.date}
+                            onChange={handleEditInputChange}
+                            className={styles.editInput}
+                            required
+                            disabled={submitting}
+                          />
+                        </span>
+                        <span>
+                          <input
+                            type="text"
+                            name="description"
+                            value={editingExpense.description}
+                            onChange={handleEditInputChange}
+                            className={styles.editInput}
+                            required
+                            disabled={submitting}
+                          />
+                        </span>
+                        <span>
+                          <input
+                            type="number"
+                            name="amount"
+                            value={editingExpense.amount}
+                            onChange={handleEditInputChange}
+                            className={styles.editInput}
+                            min="0"
+                            step="0.01"
+                            required
+                            disabled={submitting}
+                          />
+                        </span>
+                        <span className={styles.expenseActions}>
+                          {submitting ? (
+                            <div className={styles.loadingSpinner} style={{ width: '20px', height: '20px', borderWidth: '2px', margin: '0 auto' }}></div>
+                          ) : (
+                            <>
+                              <button 
+                                className={`${styles.actionButton} ${styles.saveButton}`}
+                                onClick={saveEditedExpense}
+                                title="Guardar cambios"
+                                disabled={submitting}
+                              >
+                                <FaSave />
+                              </button>
+                              <button 
+                                className={`${styles.actionButton} ${styles.cancelButton}`}
+                                onClick={cancelEditing}
+                                title="Cancelar edición"
+                                disabled={submitting}
+                              >
+                                <FaTimes />
+                              </button>
+                            </>
+                          )}
+                        </span>
+                      </>
+                    ) : showDeleteConfirmation === expense.id ? (
+                      // Delete confirmation mode
+                      <>
+                        <span colSpan="3" className={styles.deleteConfirmation}>
+                          ¿Estás seguro que deseas eliminar este gasto?
+                        </span>
+                        <span className={styles.expenseActions}>
+                          {submitting ? (
+                            <div className={styles.loadingSpinner} style={{ width: '20px', height: '20px', borderWidth: '2px', margin: '0 auto' }}></div>
+                          ) : (
+                            <>
+                              <button 
+                                className={`${styles.actionButton} ${styles.confirmButton}`}
+                                onClick={() => deleteExpense(expense.id)}
+                                title="Confirmar eliminación"
+                                disabled={submitting}
+                              >
+                                <FaCheck />
+                              </button>
+                              <button 
+                                className={`${styles.actionButton} ${styles.cancelButton}`}
+                                onClick={cancelDelete}
+                                title="Cancelar eliminación"
+                                disabled={submitting}
+                              >
+                                <FaTimes />
+                              </button>
+                            </>
+                          )}
+                        </span>
+                      </>
+                    ) : (
+                      // Normal display mode
+                      <>
+                        <span>{formatDateDDMMYYYY(expense.date)}</span>
+                        <span>{expense.description}</span>
+                        <span>${expense.amount.toFixed(2)}</span>
+                        <span className={styles.expenseActions}>
+                          <button 
+                            className={styles.actionButton} 
+                            onClick={() => startEditing(expense)}
+                            title="Editar"
+                          >
+                            <FaEdit />
+                          </button>
+                          <button 
+                            className={styles.actionButton} 
+                            onClick={() => confirmDelete(expense.id)}
+                            title="Eliminar"
+                          >
+                            <FaTrash />
+                          </button>
+                        </span>
+                      </>
+                    )}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p>No hay gastos registrados aún.</p>
+            )}
+          </div>
         </>
       )}
     </div>
