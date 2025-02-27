@@ -25,12 +25,18 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         known_hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
         if_key_exists: replace
-        config: ${{ secrets.SSH_CONFIG }}
+        config: |
+          Host *
+            StrictHostKeyChecking accept-new
+            BatchMode yes
+            AddKeysToAgent yes
 
     - name: Debug SSH setup
       run: |
+        echo "Checking SSH directory permissions..."
+        ls -la ~/.ssh/
         echo "Testing SSH connection..."
-        ssh -v root@${{ secrets.VPS_HOST }} 'echo "SSH connection successful"'
+        ssh -o BatchMode=yes -o StrictHostKeyChecking=accept-new root@${{ secrets.VPS_HOST }} 'echo "SSH connection successful"'
 
     - name: Set environment variables
       run: |
@@ -48,7 +54,7 @@ jobs:
     - name: Sync files to VPS
       run: |
         rsync -avz --delete \
-          -e "ssh -o StrictHostKeyChecking=accept-new -v" \
+          -e "ssh -o BatchMode=yes -o StrictHostKeyChecking=accept-new" \
           --exclude='.git' \
           --exclude='node_modules' \
           ./ root@${{ secrets.VPS_HOST }}:/var/www/gestionatuar_usr/data/www/gestionatuarriendo.cl/
