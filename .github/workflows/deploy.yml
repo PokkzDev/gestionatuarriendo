@@ -1,0 +1,95 @@
+name: Deploy to VPS
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '20'
+        cache: 'npm'
+
+    - name: Install SSH key
+      uses: shimataro/ssh-key-action@v2
+      with:
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        known_hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
+        if_key_exists: replace
+        config: ${{ secrets.SSH_CONFIG }}
+
+    - name: Set environment variables
+      run: |
+        cat << EOF > .env
+        DATABASE_URL=${{ secrets.DATABASE_URL }}
+        NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}
+        NEXT_PUBLIC_APP_URL=${{ secrets.NEXT_PUBLIC_APP_URL }}
+        EMAIL_HOST=${{ secrets.EMAIL_HOST }}
+        EMAIL_PORT=${{ secrets.EMAIL_PORT }}
+        EMAIL_USER=${{ secrets.EMAIL_USER }}
+        EMAIL_PASS=${{ secrets.EMAIL_PASS }}
+        NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }}
+        EOF
+
+    - name: Sync files to VPS
+      run: rsync -avz --delete --exclude='.git' --exclude='node_modules' ./ root@${{ secrets.VPS_HOST }}:/var/www/gestionatuar_usr/data/www/gestionatuarriendo.cl/
+
+    - name: Deploy to VPS
+      run: |
+        ssh root@${{ secrets.VPS_HOST }} << 'EOF'
+        source /root/.nvm/nvm.sh
+        cd /var/www/gestionatuar_usr/data/www/gestionatuarriendo.cl
+        
+        # Install dependencies
+        npm install
+        
+        # Generate Prisma client
+        npx prisma generate
+        
+        # Run database migrations
+        npx prisma migrate deploy
+        
+        # Clean .next directory if it exists
+        rm -rf .next
+        
+        # Build the application
+        NODE_ENV=production npm run build
+        
+        # Verify build directory exists
+        if [ ! -d ".next" ]; then
+          echo "Build failed - .next directory not found"
+          exit 1
+        fi
+        
+        # Stop and delete existing process if it exists
+        pm2 describe gestionatuarriendo > /dev/null 2>&1 && pm2 delete gestionatuarriendo
+        
+        # Start the Next.js application with PM2
+        NODE_ENV=production pm2 start npm --name "gestionatuarriendo" -- start -- -p 3003
+        
+        # Save the PM2 process list and ensure it persists across reboots
+        pm2 save
+        pm2 startup
+        EOF
+
+  post-deployment:
+    needs: deploy
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+    - name: Install SSH key
+      uses: shimataro/ssh-key-action@v2
+      with:
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        known_hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
+        if_key_exists: replace
+        config: ${{ secrets.SSH_CONFIG }} 
