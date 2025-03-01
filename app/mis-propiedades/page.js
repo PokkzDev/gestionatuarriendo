@@ -19,8 +19,10 @@ import {
   FaEnvelope,
   FaInfo,
   FaSpinner,
-  FaPaperPlane
+  FaPaperPlane,
+  FaClipboardList
 } from 'react-icons/fa';
+import SolicitudesModal from './components/SolicitudesModal';
 
 function MisPropiedadesContent() {
   const [properties, setProperties] = useState([]);
@@ -29,6 +31,7 @@ function MisPropiedadesContent() {
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showTenantModal, setShowTenantModal] = useState(false);
+  const [showSolicitudesModal, setShowSolicitudesModal] = useState(false);
   const [currentProperty, setCurrentProperty] = useState(null);
   const [tenantEmail, setTenantEmail] = useState('');
   const [tenantInviteStatus, setTenantInviteStatus] = useState({ loading: false, error: '', success: false });
@@ -56,6 +59,7 @@ function MisPropiedadesContent() {
   const { data: session, status } = useSession();
   const [accountTier, setAccountTier] = useState('FREE');
   const [propertyCount, setPropertyCount] = useState(0);
+  const [pendingSolicitudes, setPendingSolicitudes] = useState({});
 
   // Fetch properties when component mounts
   useEffect(() => {
@@ -65,20 +69,25 @@ function MisPropiedadesContent() {
     }
   }, [status, session]);
 
+  // Add a new useEffect to fetch pending solicitudes counts
+  useEffect(() => {
+    if (status === 'authenticated' && properties.length > 0) {
+      fetchPendingSolicitudes();
+    }
+  }, [status, properties]);
+
   // Function to fetch properties from API
   const fetchProperties = async () => {
     setIsLoading(true);
-    console.log('Fetching properties...');
     try {
-      console.log('Session status:', status);
-      console.log('User session:', session);
+    
       const response = await fetch('/api/properties');
-      console.log('API response status:', response.status);
+    
       if (!response.ok) {
         throw new Error(`Error al obtener propiedades: ${response.status}`);
       }
       const data = await response.json();
-      console.log('Fetched properties data:', data);
+   
       setProperties(data);
       setPropertyCount(data.length);
     } catch (error) {
@@ -86,6 +95,34 @@ function MisPropiedadesContent() {
       setError('No se pudieron cargar las propiedades. Por favor, intenta nuevamente.');
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  // Function to fetch pending solicitudes counts
+  const fetchPendingSolicitudes = async () => {
+    try {
+      const response = await fetch('/api/properties/solicitudes');
+      
+      if (!response.ok) {
+        throw new Error('Error al obtener solicitudes pendientes');
+      }
+      
+      const solicitudes = await response.json();
+      
+      // Count pending solicitudes by property
+      const pendingByProperty = {};
+      solicitudes.forEach(solicitud => {
+        if (solicitud.status === 'PENDIENTE' || solicitud.status === 'EN_PROCESO') {
+          if (!pendingByProperty[solicitud.property.id]) {
+            pendingByProperty[solicitud.property.id] = 0;
+          }
+          pendingByProperty[solicitud.property.id]++;
+        }
+      });
+      
+      setPendingSolicitudes(pendingByProperty);
+    } catch (error) {
+      console.error('Error fetching pending solicitudes:', error);
     }
   };
 
@@ -380,10 +417,6 @@ function MisPropiedadesContent() {
   const handleTenantSubmit = async (e) => {
     e.preventDefault();
     
-    console.log('Current property:', currentProperty);
-    console.log('Property ID:', currentProperty?.id);
-    console.log('Tenant email:', tenantEmail);
-    
     if (!tenantEmail || !currentProperty) {
       setTenantInviteStatus({
         loading: false,
@@ -404,7 +437,7 @@ function MisPropiedadesContent() {
       tenantEmail: tenantEmail,
     };
     
-    console.log('Sending invite request with data:', requestData);
+  
     
     try {
       const response = await fetch('/api/properties/invite', {
@@ -417,7 +450,7 @@ function MisPropiedadesContent() {
       });
       
       const data = await response.json();
-      console.log('Invite API response:', data);
+     
       
       if (!response.ok) {
         throw new Error(data.error || 'Error al enviar la invitación');
@@ -459,6 +492,12 @@ function MisPropiedadesContent() {
       success: false
     });
     setShowTenantModal(true);
+  };
+
+  // Function to open the solicitudes modal
+  const openSolicitudesModal = (property) => {
+    setCurrentProperty(property);
+    setShowSolicitudesModal(true);
   };
 
   // Render loading state
@@ -530,6 +569,8 @@ function MisPropiedadesContent() {
         <div className={styles.propertiesList}>
           {properties.map((property) => {
             const statusInfo = getStatusInfo(property.status);
+            const hasPendingSolicitudes = pendingSolicitudes[property.id] && pendingSolicitudes[property.id] > 0;
+            
             return (
               <div key={property.id} className={styles.propertyCard}>
                 <div className={styles.propertyHeader}>
@@ -587,6 +628,23 @@ function MisPropiedadesContent() {
                     <span className={styles.propertyDetailLabel}>Estado:</span>
                     <span className={`${styles.propertyStatus} ${statusInfo.className}`}>{statusInfo.text}</span>
                   </div>
+                  
+                  {/* Add Solicitudes Section */}
+                  {property.tenants && property.tenants.length > 0 && property.tenants[0].status === 'ACCEPTED' && (
+                    <div className={styles.solicitudesSection}>
+                      <div className={styles.solicitudesHeader} onClick={() => openSolicitudesModal(property)}>
+                        <FaClipboardList className={styles.solicitudesIcon} />
+                        <h4 className={styles.solicitudesTitle}>Solicitudes</h4>
+                        {hasPendingSolicitudes ? (
+                          <span className={`${styles.solicitudesCounter} ${styles.hasPending}`}>
+                            {pendingSolicitudes[property.id]}
+                          </span>
+                        ) : (
+                          <span className={styles.solicitudesCounter}>0</span>
+                        )}
+                      </div>
+                    </div>
+                  )}
                   
                   {/* Mostrar información del arrendatario si ha aceptado la invitación */}
                   {property.tenants && property.tenants.length > 0 && property.tenants[0].status === 'ACCEPTED' && property.tenants[0].tenantUser && (
@@ -649,6 +707,7 @@ function MisPropiedadesContent() {
                       <FaUserPlus />
                     }
                   </button>
+                  
                   <button 
                     className={`${styles.actionButton} ${styles.editButton}`}
                     onClick={() => openEditModal(property)}
@@ -1520,6 +1579,14 @@ function MisPropiedadesContent() {
             )}
           </div>
         </div>
+      )}
+
+      {/* Solicitudes Modal */}
+      {showSolicitudesModal && currentProperty && (
+        <SolicitudesModal 
+          property={currentProperty}
+          onClose={() => setShowSolicitudesModal(false)}
+        />
       )}
     </div>
   );

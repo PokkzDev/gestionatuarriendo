@@ -11,6 +11,7 @@ import PaymentsSection from './PaymentsSection';
 import LoadingState from './ui/LoadingState';
 import ErrorState from './ui/ErrorState';
 import NoRentalState from './ui/NoRentalState';
+import SolicitudesSection from './solicitudes/SolicitudesSection';
 
 // Utils
 import { formatCurrency, formatDate } from '../utils/formatters';
@@ -19,6 +20,7 @@ const MiArriendoContent = () => {
   const [rental, setRental] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [activeTab, setActiveTab] = useState('informacion');
   const { data: session } = useSession();
 
   useEffect(() => {
@@ -79,35 +81,67 @@ const MiArriendoContent = () => {
     return <NoRentalState />;
   }
 
+  const renderTabContent = () => {
+    switch (activeTab) {
+      case 'informacion':
+        return (
+          <>
+            <PropertyCard 
+              property={rental.property}
+              owner={rental.owner}
+              startDate={rental.startDate}
+              paymentDueDay={rental.property?.paymentDueDay}
+              formatDate={formatDate}
+              formatCurrency={formatCurrency}
+            />
+            
+            <PropertyCharacteristicsSection property={rental.property} />
+            
+            {/* PaymentsSection hidden temporarily
+            <PaymentsSection 
+              payments={rental.payments}
+              formatDate={formatDate}
+              formatCurrency={formatCurrency}
+            />
+            */}
+            
+            {/* ContractSection hidden temporarily
+            <ContractSection 
+              contract={rental.contract}
+              formatDate={formatDate}
+            />
+            */}
+          </>
+        );
+      case 'solicitudes':
+        return <SolicitudesSection />;
+      default:
+        return null;
+    }
+  };
+
   return (
     <div className={styles.container}>
       <h1 className={styles.pageTitle}>Mi Arriendo</h1>
       
-      <PropertyCard 
-        property={rental.property}
-        owner={rental.owner}
-        startDate={rental.startDate}
-        paymentDueDay={rental.property?.paymentDueDay}
-        formatDate={formatDate}
-        formatCurrency={formatCurrency}
-      />
+      <div className={styles.tabsContainer}>
+        <button 
+          className={`${styles.tabButton} ${activeTab === 'informacion' ? styles.activeTab : ''}`}
+          onClick={() => setActiveTab('informacion')}
+        >
+          Información
+        </button>
+        <button 
+          className={`${styles.tabButton} ${activeTab === 'solicitudes' ? styles.activeTab : ''}`}
+          onClick={() => setActiveTab('solicitudes')}
+        >
+          Solicitudes
+        </button>
+      </div>
       
-      <PropertyCharacteristicsSection property={rental.property} />
-      
-      {/* PaymentsSection hidden temporarily
-      <PaymentsSection 
-        payments={rental.payments}
-        formatDate={formatDate}
-        formatCurrency={formatCurrency}
-      />
-      */}
-      
-      {/* ContractSection hidden temporarily
-      <ContractSection 
-        contract={rental.contract}
-        formatDate={formatDate}
-      />
-      */}
+      <div className={styles.tabContent}>
+        {renderTabContent()}
+      </div>
     </div>
   );
 };

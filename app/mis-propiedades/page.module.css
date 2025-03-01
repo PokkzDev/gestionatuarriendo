@@ -968,6 +968,60 @@
   margin-bottom: 10px;
 }
 
+/* Solicitudes in property card styles */
+.solicitudesSection {
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.solicitudesHeader {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 6px;
+  transition: background-color 0.2s ease;
+}
+
+.solicitudesHeader:hover {
+  background-color: #f1f5f9;
+}
+
+.solicitudesIcon {
+  margin-right: 8px;
+  font-size: 18px;
+  color: #3b82f6;
+}
+
+.solicitudesTitle {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  flex-grow: 1;
+}
+
+.solicitudesCounter {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 8px;
+  border-radius: 12px;
+  background-color: #e2e8f0;
+  color: #475569;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.solicitudesCounter.hasPending {
+  background-color: #ef4444;
+  color: white;
+}
+
 /* Current tenant information styles in modal */
 .currentTenantInfo {
   margin-bottom: 20px;
@@ -1040,4 +1094,458 @@
   margin-top: 20px;
   display: flex;
   justify-content: flex-end;
+}
+
+/* Solicitudes Section Styles */
+.solicitudesSection {
+  margin-top: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.sectionTitle {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #1e293b;
+  display: flex;
+  align-items: center;
+  margin: 0;
+}
+
+.sectionIcon {
+  margin-right: 8px;
+  color: #3b82f6;
+}
+
+.loadingContainer, .errorContainer, .emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 30px;
+  text-align: center;
+}
+
+.loadingIcon {
+  font-size: 24px;
+  color: #3b82f6;
+  animation: spin 1s linear infinite;
+  margin-bottom: 10px;
+}
+
+.errorIcon {
+  font-size: 24px;
+  color: #ef4444;
+  margin-bottom: 10px;
+}
+
+.retryButton {
+  margin-top: 10px;
+  padding: 8px 16px;
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.retryButton:hover {
+  background-color: #2563eb;
+}
+
+.solicitudesList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.solicitudCard {
+  background-color: #f8fafc;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.solicitudCard.expanded {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.solicitudHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  cursor: pointer;
+  background-color: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.solicitudInfo {
+  flex: 1;
+}
+
+.solicitudTitle {
+  margin: 0 0 8px 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.solicitudMeta {
+  display: flex;
+  gap: 12px;
+  font-size: 0.85rem;
+  color: #64748b;
+}
+
+.solicitudDate, .solicitudType {
+  display: flex;
+  align-items: center;
+}
+
+.solicitudPriority {
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.priorityLow {
+  background-color: #e0f2fe;
+  color: #0369a1;
+}
+
+.priorityMedium {
+  background-color: #fef9c3;
+  color: #854d0e;
+}
+
+.priorityHigh {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+
+.priorityUrgent {
+  background-color: #7f1d1d;
+  color: #ffffff;
+}
+
+.solicitudStatus {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.statusBadge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.statusPending {
+  background-color: #fef9c3;
+  color: #854d0e;
+}
+
+.statusInProgress {
+  background-color: #e0f2fe;
+  color: #0369a1;
+}
+
+.statusCompleted {
+  background-color: #dcfce7;
+  color: #166534;
+}
+
+.statusRejected {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+
+.solicitudContent {
+  padding: 16px;
+  background-color: #ffffff;
+}
+
+.solicitudProperty, .solicitudTenant {
+  margin-bottom: 12px;
+  font-size: 0.9rem;
+}
+
+.solicitudDescription {
+  margin-bottom: 20px;
+}
+
+.solicitudDescription h4 {
+  margin: 0 0 8px 0;
+  font-size: 0.95rem;
+  color: #475569;
+}
+
+.solicitudDescription p {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: #1e293b;
+  white-space: pre-line;
+}
+
+.solicitudResponses {
+  margin-bottom: 20px;
+}
+
+.solicitudResponses h4 {
+  margin: 0 0 12px 0;
+  font-size: 0.95rem;
+  color: #475569;
+}
+
+.responseItem {
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+.ownerResponse {
+  background-color: #e0f2fe;
+  margin-left: 20px;
+}
+
+.tenantResponse {
+  background-color: #f1f5f9;
+  margin-right: 20px;
+}
+
+.responseHeader {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 0.85rem;
+}
+
+.responseAuthor {
+  font-weight: 600;
+}
+
+.responseDate {
+  color: #64748b;
+}
+
+.responseMessage {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  white-space: pre-line;
+}
+
+.solicitudActions {
+  margin-top: 20px;
+}
+
+.responseForm {
+  margin-bottom: 20px;
+}
+
+.responseForm h4 {
+  margin: 0 0 8px 0;
+  font-size: 0.95rem;
+  color: #475569;
+}
+
+.responseTextarea {
+  width: 100%;
+  min-height: 100px;
+  padding: 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 0.9rem;
+  resize: vertical;
+  margin-bottom: 12px;
+}
+
+.responseActions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.statusUpdateSection {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.statusUpdateSection label {
+  font-size: 0.9rem;
+  color: #475569;
+}
+
+.statusSelect {
+  padding: 8px;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.sendButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.sendButton:hover:not(:disabled) {
+  background-color: #2563eb;
+}
+
+.sendButton:disabled {
+  background-color: #94a3b8;
+  cursor: not-allowed;
+}
+
+.spinnerIcon {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.quickActions {
+  border-top: 1px solid #e2e8f0;
+  padding-top: 16px;
+}
+
+.quickActions h4 {
+  margin: 0 0 12px 0;
+  font-size: 0.95rem;
+  color: #475569;
+}
+
+.statusButtons {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.statusButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.inProgressButton {
+  background-color: #e0f2fe;
+  color: #0369a1;
+}
+
+.inProgressButton:hover:not(:disabled) {
+  background-color: #bae6fd;
+}
+
+.completedButton {
+  background-color: #dcfce7;
+  color: #166534;
+}
+
+.completedButton:hover:not(:disabled) {
+  background-color: #bbf7d0;
+}
+
+.rejectedButton {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+
+.rejectedButton:hover:not(:disabled) {
+  background-color: #fecaca;
+}
+
+.statusButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Solicitudes Badge */
+.solicitudesBadge {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.solicitudesCount {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background-color: #ef4444;
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  font-size: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.solicitudesButton {
+  background-color: #f1f5f9;
+  border: none;
+  border-radius: 4px;
+  padding: 8px;
+  cursor: pointer;
+  color: #475569;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.solicitudesButton:hover {
+  background-color: #e2e8f0;
+  color: #1e293b;
+}
+
+.solicitudesButtonWithPending {
+  color: #b91c1c;
+}
+
+.solicitudesButtonWithPending:hover {
+  background-color: #fee2e2;
+  color: #b91c1c;
 } 

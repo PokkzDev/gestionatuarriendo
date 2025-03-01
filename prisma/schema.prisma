@@ -118,6 +118,7 @@ model PropertyTenant {
   createdAt   DateTime         @default(now())
   updatedAt   DateTime         @updatedAt
   property    Property         @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  solicitudes Solicitud[]      @relation("TenantSolicitudes")
 
   @@unique([propertyId, tenantEmail])
 }
@@ -151,6 +152,35 @@ model SubscriptionPayment {
   @@index([userId])
   @@index([status])
   @@index([createdAt])
+}
+
+model Solicitud {
+  id              String          @id @default(uuid()) @db.VarChar(36)
+  title           String
+  description     String          @db.Text
+  status          SolicitudStatus @default(PENDIENTE)
+  type            SolicitudType
+  priority        SolicitudPriority @default(MEDIA)
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  propertyTenantId String         @db.VarChar(36)
+  propertyTenant  PropertyTenant  @relation("TenantSolicitudes", fields: [propertyTenantId], references: [id], onDelete: Cascade)
+  responses       SolicitudResponse[]
+
+  @@index([propertyTenantId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model SolicitudResponse {
+  id          String   @id @default(uuid()) @db.VarChar(36)
+  message     String   @db.Text
+  createdAt   DateTime @default(now())
+  solicitudId String   @db.VarChar(36)
+  isFromOwner Boolean  @default(false)
+  solicitud   Solicitud @relation(fields: [solicitudId], references: [id], onDelete: Cascade)
+
+  @@index([solicitudId])
 }
 
 enum Role {
@@ -208,4 +238,26 @@ enum SubscriptionPaymentStatus {
 enum PaymentType {
   SUBSCRIPTION
   ONE_TIME
+}
+
+enum SolicitudStatus {
+  PENDIENTE
+  EN_PROCESO
+  COMPLETADA
+  RECHAZADA
+}
+
+enum SolicitudType {
+  REPARACION
+  MANTENIMIENTO
+  CONSULTA
+  QUEJA
+  OTRO
+}
+
+enum SolicitudPriority {
+  BAJA
+  MEDIA
+  ALTA
+  URGENTE
 }
