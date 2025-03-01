@@ -458,8 +458,22 @@
 }
 
 .paymentNote {
-  color: #888;
+  color: #666;
   font-size: 0.9rem;
+  text-align: center;
+  margin-top: 10px;
+}
+
+.disabledPlanNote {
+  color: #f5222d;
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-top: 15px;
+  text-align: center;
+  padding: 5px;
+  border-radius: 4px;
+  background-color: #fff1f0;
+  border: 1px solid #ffccc7;
 }
 
 @media (max-width: 768px) {

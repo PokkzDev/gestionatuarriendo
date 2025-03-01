@@ -194,29 +194,23 @@ export default function Planes() {
             <button 
               className={styles.planButton}
               style={{ 
-                backgroundColor: plan.id === userTier ? '#f5f5f5' : plan.color,
-                color: plan.id === userTier ? '#333' : 'white',
-                cursor: plan.id === userTier ? 'default' : 'pointer'
+                backgroundColor: '#f5f5f5',
+                color: '#333',
+                cursor: 'not-allowed'
               }}
-              onClick={() => handleUpgrade(plan.id)}
-              disabled={plan.id === userTier || loading}
+              disabled={true}
             >
-              {plan.id === userTier ? 'Plan Actual' : (
-                <>
-                  {loading && selectedPlan === plan.id ? (
-                    <div className={styles.buttonSpinner}></div>
-                  ) : (
-                    <>
-                      {plan.buttonText} <FaArrowRight style={{ marginLeft: '5px' }} />
-                    </>
-                  )}
-                </>
-              )}
+              {plan.id === userTier ? 'Plan Actual' : 'No disponible temporalmente'}
             </button>
             
             {plan.id === userTier && (
               <div className={styles.currentPlanBadge}>
                 Tu plan actual
+              </div>
+            )}
+            {plan.id !== userTier && (
+              <div className={styles.disabledPlanNote}>
+                Compra de planes temporalmente deshabilitada
               </div>
             )}
           </div>
