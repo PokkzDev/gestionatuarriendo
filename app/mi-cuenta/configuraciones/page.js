@@ -20,7 +20,8 @@ import {
   FaMobileAlt,
   FaLanguage,
   FaEye,
-  FaEyeSlash
+  FaEyeSlash,
+  FaCrown
 } from 'react-icons/fa';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
@@ -31,6 +32,7 @@ import SecuritySettings from './components/SecuritySettings';
 import NotificationSettings from './components/NotificationSettings';
 import AppearanceSettings from './components/AppearanceSettings';
 import AccountSettings from './components/AccountSettings';
+import SubscriptionSettings from './components/SubscriptionSettings';
 
 export default function MiCuentaPreferencias() {
   const { data: session } = useSession();
@@ -131,6 +133,7 @@ export default function MiCuentaPreferencias() {
     { id: 'security', label: 'Seguridad', icon: <FaLock className={styles.settingIcon} /> },
     { id: 'notifications', label: 'Notificaciones', icon: <FaBell className={styles.settingIcon} /> },
     { id: 'appearance', label: 'Apariencia', icon: <FaPalette className={styles.settingIcon} /> },
+    { id: 'subscription', label: 'Suscripción', icon: <FaCrown className={styles.settingIcon} /> },
     { id: 'account', label: 'Cuenta', icon: <FaShieldAlt className={styles.settingIcon} /> },
   ];
 
@@ -194,6 +197,8 @@ export default function MiCuentaPreferencias() {
         return <NotificationSettings />;
       case 'appearance':
         return <AppearanceSettings />;
+      case 'subscription':
+        return <SubscriptionSettings />;
       case 'account':
         return <AccountSettings />;
       default:
@@ -210,7 +215,7 @@ export default function MiCuentaPreferencias() {
         <h1 className={styles.title}>Configuraciones</h1>
         <div className={styles.settingsCategoryList}>
           {settingCategories.map((category) => {
-            const isDisabled = ['notifications', 'appearance', 'account'].includes(category.id);
+            const isDisabled = ['notifications', 'appearance'].includes(category.id);
             return (
               <button
                 key={category.id}

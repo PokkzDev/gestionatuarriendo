@@ -126,6 +126,14 @@
   line-height: 1.5;
 }
 
+.subscriptionNote {
+  color: #1890ff;
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
 .featuresList {
   list-style: none;
   padding: 0;
@@ -176,6 +184,45 @@
   opacity: 0.7;
 }
 
+.buttonSpinner {
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border-top-color: #fff;
+  animation: spin 1s linear infinite;
+  margin: 0 auto;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.pendingMessage {
+  background-color: #fffbe6;
+  border: 1px solid #ffe58f;
+  border-radius: 4px;
+  padding: 10px;
+  margin: 15px 0;
+  color: #ad8b00;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.subscriptionBadge {
+  display: inline-flex;
+  align-items: center;
+  background-color: #e6f7ff;
+  color: #1890ff;
+  border: 1px solid #91d5ff;
+  border-radius: 20px;
+  padding: 5px 15px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin: 10px 0;
+}
+
 @media (max-width: 1080px) {
   .plansContainer {
     gap: 20px;
@@ -215,29 +262,209 @@
   }
 }
 
-.successContainer,
-.failureContainer {
+/* Payment result pages styles */
+.loadingContainer {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 2rem;
-  margin: 2rem auto;
-  max-width: 600px;
-  text-align: center;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  min-height: 400px;
 }
 
-.successContainer h1,
-.failureContainer h1 {
-  margin: 1rem 0;
+.spinner {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border-left-color: #1890ff;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.successContainer,
+.failureContainer,
+.pendingContainer {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 40px;
+  max-width: 600px;
+  margin: 40px auto;
+  text-align: center;
+}
+
+.successIcon,
+.errorIcon,
+.pendingIcon {
+  margin-bottom: 24px;
+}
+
+.paymentId {
+  margin-top: 24px;
+  padding: 12px;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 14px;
+}
+
+.buttonContainer {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 32px;
+}
+
+.button {
+  padding: 10px 20px;
+  border-radius: 4px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  border: none;
+  background-color: #1890ff;
+  color: white;
+}
+
+.button:hover {
+  opacity: 0.9;
+}
+
+.secondaryButton {
+  background-color: #f5f5f5;
+  color: #333;
+  border: 1px solid #d9d9d9;
+}
+
+.secondaryButton:hover {
+  background-color: #e8e8e8;
+}
+
+/* Add these new styles for the card form */
+.cardFormContainer {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.cardFormTitle {
+  text-align: center;
+  margin-bottom: 30px;
   color: #333;
 }
 
-.successContainer p,
-.failureContainer p {
+.planSummary {
+  display: flex;
+  align-items: center;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 30px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.planIcon {
+  font-size: 32px;
+  margin-right: 20px;
+}
+
+.planDetails {
+  flex: 1;
+}
+
+.errorMessage {
+  background-color: #fff2f0;
+  border: 1px solid #ffccc7;
+  color: #f5222d;
+  padding: 10px 15px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+}
+
+.cardFormActions {
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
+}
+
+.button {
+  padding: 12px 24px;
+  border-radius: 4px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+}
+
+.secondaryButton {
+  background-color: #f5f5f5;
+  color: #333;
+  border: 1px solid #d9d9d9;
+}
+
+.secondaryButton:hover {
+  background-color: #e8e8e8;
+}
+
+.secondaryButton:disabled {
+  background-color: #f5f5f5;
+  color: #bfbfbf;
+  cursor: not-allowed;
+}
+
+/* Payment methods section */
+.paymentMethodsInfo {
+  margin-top: 50px;
+  text-align: center;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.paymentMethodsInfo h3 {
+  margin-bottom: 20px;
+  color: #333;
+  font-size: 1.3rem;
+}
+
+.paymentIcons {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin-bottom: 20px;
+}
+
+.paymentMethod {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.paymentMethod span {
+  font-size: 0.9rem;
   color: #666;
-  margin-bottom: 1rem;
-} 
+  font-weight: 500;
+}
+
+.paymentNote {
+  color: #888;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+  .paymentIcons {
+    flex-direction: column;
+    gap: 15px;
+  }
+}

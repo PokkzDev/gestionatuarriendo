@@ -2,39 +2,38 @@
 
 import { useRouter, useSearchParams } from 'next/navigation';
 import styles from '../page.module.css';
-import { FaTimesCircle, FaArrowLeft, FaRedo } from 'react-icons/fa';
+import { FaClock, FaArrowLeft, FaHome } from 'react-icons/fa';
 
-export default function PaymentFailure() {
+export default function PaymentPending() {
   const router = useRouter();
   const searchParams = useSearchParams();
   
-  // Get error details from URL parameters
+  // Get payment details from URL parameters
   const paymentId = searchParams.get('payment_id');
   const status = searchParams.get('status');
-  const errorMessage = searchParams.get('error') || 'El pago no pudo ser procesado';
+  const externalReference = searchParams.get('external_reference');
 
   const handleBackToPlans = () => {
     router.push('/planes');
   };
 
-  const handleTryAgain = () => {
-    // Go back to plans page to try again
-    router.push('/planes');
+  const handleGoToHome = () => {
+    router.push('/');
   };
 
   return (
     <div className={styles.container}>
-      <div className={styles.failureContainer}>
-        <div className={styles.errorIcon}>
-          <FaTimesCircle size={60} color="#ff4d4f" />
+      <div className={styles.pendingContainer}>
+        <div className={styles.pendingIcon}>
+          <FaClock size={60} color="#faad14" />
         </div>
-        <h1 className={styles.title}>Pago Fallido</h1>
+        <h1 className={styles.title}>Pago en Proceso</h1>
         <p className={styles.message}>
-          {errorMessage}
+          Tu pago está siendo procesado. Te notificaremos cuando se complete.
         </p>
         {paymentId && (
           <p className={styles.paymentId}>
-            ID de referencia: {paymentId}
+            ID de pago: {paymentId}
           </p>
         )}
 
@@ -48,9 +47,9 @@ export default function PaymentFailure() {
           
           <button 
             className={styles.button}
-            onClick={handleTryAgain}
+            onClick={handleGoToHome}
           >
-            <FaRedo style={{ marginRight: '8px' }} /> Intentar Nuevamente
+            <FaHome style={{ marginRight: '8px' }} /> Ir al Inicio
           </button>
         </div>
       </div>

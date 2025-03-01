@@ -8,22 +8,22 @@ datasource db {
 }
 
 model Account {
-  id                 String  @id @default(uuid()) @db.VarChar(36)
-  userId             String  @db.VarChar(36)
-  type               String
-  provider           String
-  providerAccountId  String
-  refresh_token      String?  @db.Text
-  access_token       String?  @db.Text
-  expires_at         Int?
+  id                String  @id @default(uuid()) @db.VarChar(36)
+  userId            String  @db.VarChar(36)
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String?  @db.Text
+  id_token          String? @db.Text
   session_state     String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
+  @@index([userId], map: "Account_userId_fkey")
 }
 
 model Session {
@@ -32,6 +32,8 @@ model Session {
   userId       String   @db.VarChar(36)
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId], map: "Session_userId_fkey")
 }
 
 model VerificationToken {
@@ -43,25 +45,112 @@ model VerificationToken {
 }
 
 model User {
-  id String @id @default(uuid()) @db.VarChar(36)
-  email String @unique
-  name String?
-  password String?
-  emailVerified DateTime?
-  image String?
-  role Role @default(ARRENDATARIO)
-  nameChangesCount Int @default(0)
-  accountTier AccountTier @default(FREE)
-  subscriptionId String?
-  subscriptionStatus String?
-  
-  accounts Account[]
-  sessions Session[]
-  expenses Expense[]
-  properties Property[]
-  
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id                    String                @id @default(uuid()) @db.VarChar(36)
+  email                 String                @unique
+  name                  String?
+  password              String?
+  emailVerified         DateTime?
+  image                 String?
+  role                  Role                  @default(ARRENDATARIO)
+  createdAt             DateTime              @default(now())
+  updatedAt             DateTime              @updatedAt
+  nameChangesCount      Int                   @default(0)
+  accountTier           AccountTier           @default(FREE)
+  subscriptionId        String?
+  subscriptionStatus    String?
+  subscriptionExpiresAt DateTime?
+  subscriptionType      String?
+  metadata              Json?
+  accounts              Account[]
+  expenses              Expense[]
+  properties            Property[]
+  sessions              Session[]
+  subscriptionPayments  SubscriptionPayment[]
+}
+
+model Expense {
+  id          String      @id @default(uuid()) @db.VarChar(36)
+  amount      Float
+  description String
+  date        DateTime    @default(now())
+  type        ExpenseType
+  userId      String      @db.VarChar(36)
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId], map: "Expense_userId_fkey")
+}
+
+model Property {
+  id             String           @id @default(uuid()) @db.VarChar(36)
+  name           String
+  address        String
+  description    String?
+  bedrooms       Int              @default(1)
+  bathrooms      Int              @default(1)
+  hasParking     Boolean          @default(false)
+  totalArea      Float?
+  rentAmount     Float?
+  status         PropertyStatus   @default(AVAILABLE)
+  userId         String           @db.VarChar(36)
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  propertyType   PropertyType     @default(APARTMENT)
+  furnished      Boolean          @default(false)
+  hasStorage     Boolean          @default(false)
+  parkingSpots   Int              @default(0)
+  parkingDetails Json?
+  storageDetails Json?
+  storageUnits   Int              @default(0)
+  paymentDueDay  Int?             @default(1)
+  petsAllowed    Boolean          @default(false)
+  user           User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tenants        PropertyTenant[]
+
+  @@index([userId], map: "Property_userId_fkey")
+}
+
+model PropertyTenant {
+  id          String           @id @default(uuid()) @db.VarChar(36)
+  propertyId  String           @db.VarChar(36)
+  tenantEmail String
+  tenantId    String?          @db.VarChar(36)
+  status      InvitationStatus @default(PENDING)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  property    Property         @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  @@unique([propertyId, tenantEmail])
+}
+
+model SubscriptionPayment {
+  id                      String                    @id @default(uuid()) @db.VarChar(36)
+  userId                  String                    @db.VarChar(36)
+  amount                  Decimal                   @db.Decimal(10, 2)
+  currency                String                    @default("CLP")
+  status                  SubscriptionPaymentStatus
+  paymentMethod           String
+  paymentType             PaymentType
+  planId                  String
+  transactionId           String?
+  merchantTransactionId   String?                   @unique
+  description             String?
+  metadata                Json?
+  billingName             String?
+  billingEmail            String?
+  billingAddress          String?
+  billingDocument         String?
+  subscriptionPeriodStart DateTime?
+  subscriptionPeriodEnd   DateTime?
+  taxAmount               Decimal?                  @db.Decimal(10, 2)
+  taxPercentage           Decimal?                  @db.Decimal(5, 2)
+  invoiceNumber           String?
+  createdAt               DateTime                  @default(now())
+  updatedAt               DateTime                  @updatedAt
+  user                    User                      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
 }
 
 enum Role {
@@ -76,16 +165,6 @@ enum AccountTier {
   ELITE
 }
 
-model Expense {
-  id String @id @default(uuid()) @db.VarChar(36)
-  amount Float
-  description String
-  date DateTime @default(now())
-  type ExpenseType
-  userId String @db.VarChar(36)
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
 enum ExpenseType {
   GAS
   ELECTRICITY
@@ -94,36 +173,6 @@ enum ExpenseType {
   RENT
   MAINTENANCE
   OTHER
-}
-
-model Property {
-  id String @id @default(uuid()) @db.VarChar(36)
-  name String
-  address String
-  description String?
-  propertyType PropertyType @default(APARTMENT)
-  bedrooms Int @default(1)
-  bathrooms Int @default(1)
-  hasParking Boolean @default(false)
-  parkingSpots Int @default(0)
-  parkingDetails Json?
-  hasStorage Boolean @default(false)
-  storageUnits Int @default(0)
-  storageDetails Json?
-  furnished Boolean @default(false)
-  totalArea Float?
-  rentAmount Float?
-  petsAllowed Boolean @default(false)
-  paymentDueDay Int? @default(1)
-  status PropertyStatus @default(AVAILABLE)
-  userId String @db.VarChar(36)
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  tenants PropertyTenant[]
-  payments Payment[]
-  
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 }
 
 enum PropertyType {
@@ -142,48 +191,21 @@ enum PropertyStatus {
   UNDER_MAINTENANCE
 }
 
-model PropertyTenant {
-  id String @id @default(uuid()) @db.VarChar(36)
-  propertyId String @db.VarChar(36)
-  tenantEmail String
-  tenantId String? @db.VarChar(36)
-  status InvitationStatus @default(PENDING)
-  
-  property Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
-  
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  
-  @@unique([propertyId, tenantEmail])
-}
-
 enum InvitationStatus {
   PENDING
   ACCEPTED
   REJECTED
 }
 
-model Payment {
-  id String @id @default(uuid()) @db.VarChar(36)
-  amount Float
-  dueDate DateTime
-  paidDate DateTime?
-  status PaymentStatus @default(PENDING)
-  
-  propertyId String @db.VarChar(36)
-  property Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
-  
-  payerId String? @db.VarChar(36)
-  
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-enum PaymentStatus {
+enum SubscriptionPaymentStatus {
   PENDING
-  PAID
-  OVERDUE
+  COMPLETED
+  FAILED
+  REFUNDED
   CANCELLED
 }
 
-
+enum PaymentType {
+  SUBSCRIPTION
+  ONE_TIME
+}

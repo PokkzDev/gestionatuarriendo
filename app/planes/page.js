@@ -1,18 +1,92 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import styles from './page.module.css';
-import { FaCrown, FaGem, FaCheck, FaTimes, FaMedal, FaArrowRight } from 'react-icons/fa';
+import { FaCrown, FaGem, FaCheck, FaTimes, FaMedal, FaArrowRight, FaCreditCard } from 'react-icons/fa';
 
 export default function Planes() {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const router = useRouter();
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [loading, setLoading] = useState(false);
+  
+  // Define all hooks at the top level
+  useEffect(() => {
+    if (status === 'authenticated' && localStorage.getItem('selectedPlanAfterLogin')) {
+      const planId = localStorage.getItem('selectedPlanAfterLogin');
+      localStorage.removeItem('selectedPlanAfterLogin');
+      
+      // Small timeout to ensure component is fully mounted
+      setTimeout(() => {
+        handleUpgrade(planId);
+      }, 100);
+    }
+  }, [status]); // We'll handle the linting warning about handleUpgrade in the complete solution
 
   const userTier = session?.user?.accountTier || 'FREE';
+
+  const handleUpgrade = async (planId) => {
+    if (planId === userTier) return;
+    
+    // Check if user is logged in - redirect to login if not
+    if (status === 'unauthenticated') {
+      // Save the selected plan ID in localStorage to retrieve after login
+      localStorage.setItem('selectedPlanAfterLogin', planId);
+      
+      // Redirect to login page with return URL
+      router.push('/api/auth/signin?callbackUrl=/planes');
+      return;
+    }
+
+    setSelectedPlan(planId);
+    setLoading(true);
+
+    try {
+      const response = await fetch('/api/mercadopago/subscriptions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ planId }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Error al procesar la suscripción');
+      }
+
+      // Check for init_point or sandbox_init_point
+      const checkoutUrl = data.init_point || data.sandbox_init_point;
+      
+      if (!checkoutUrl) {
+        throw new Error('No se recibió un enlace de pago válido');
+      }
+
+      console.log('Redirecting to Mercado Pago checkout:', checkoutUrl);
+      
+      // Redirect to MercadoPago checkout
+      window.location.href = checkoutUrl;
+    } catch (error) {
+      console.error('Error:', error);
+      alert(`Hubo un error al procesar tu solicitud: ${error.message || 'Error desconocido'}. Por favor intenta nuevamente.`);
+      setLoading(false);
+    }
+  };
+
+  // Show loading state while checking session - now after all hooks are defined
+  if (status === 'loading') {
+    return (
+      <div className={styles.container}>
+        <div className={styles.loadingContainer}>
+          <div className={styles.spinner}></div>
+          <p>Cargando planes...</p>
+        </div>
+      </div>
+    );
+  }
 
   const plans = [
     {
@@ -65,40 +139,6 @@ export default function Planes() {
     },
   ];
 
-  const handleUpgrade = async (planId) => {
-    if (planId === userTier) return;
-
-    setSelectedPlan(planId);
-    setLoading(true);
-
-    try {
-      const response = await fetch('/api/mercadopago/subscriptions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          planId,
-          userId: session?.user?.id,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Error al procesar la suscripción');
-      }
-
-      // Redirect to MercadoPago checkout
-      window.location.href = data.init_point;
-    } catch (error) {
-      console.error('Error:', error);
-      alert('Hubo un error al procesar tu solicitud. Por favor intenta nuevamente.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
     <div className={styles.container}>
       <h1 className={styles.title}>Planes de Suscripción</h1>
@@ -132,6 +172,12 @@ export default function Planes() {
             
             <p className={styles.planDescription}>{plan.description}</p>
             
+            {plan.id !== 'FREE' && (
+              <p className={styles.subscriptionNote}>
+                Suscripción mensual recurrente - Pago con tarjeta de crédito o débito
+              </p>
+            )}
+            
             <ul className={styles.featuresList}>
               {plan.features.map((feature, index) => (
                 <li key={index} className={styles.featureItem}>
@@ -157,7 +203,13 @@ export default function Planes() {
             >
               {plan.id === userTier ? 'Plan Actual' : (
                 <>
-                  {plan.buttonText} <FaArrowRight style={{ marginLeft: '5px' }} />
+                  {loading && selectedPlan === plan.id ? (
+                    <div className={styles.buttonSpinner}></div>
+                  ) : (
+                    <>
+                      {plan.buttonText} <FaArrowRight style={{ marginLeft: '5px' }} />
+                    </>
+                  )}
                 </>
               )}
             </button>
@@ -170,6 +222,23 @@ export default function Planes() {
           </div>
         ))}
       </div>
+
+      <div className={styles.paymentMethodsInfo}>
+        <h3>Métodos de pago disponibles</h3>
+        <div className={styles.paymentIcons}>
+          <div className={styles.paymentMethod}>
+            <FaCreditCard size={24} color="#1890ff" />
+            <span>Tarjetas de crédito</span>
+          </div>
+          <div className={styles.paymentMethod}>
+            <FaCreditCard size={24} color="#52c41a" />
+            <span>Tarjetas de débito</span>
+          </div>
+        </div>
+        <p className={styles.paymentNote}>
+          Todos los pagos son procesados de forma segura a través de Mercado Pago
+        </p>
+      </div>
     </div>
   );
-} 
+}
